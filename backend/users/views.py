@@ -49,3 +49,48 @@ class ProfileView(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from .models import Follow, User
+from .serializers import FollowSerializer
+
+class FollowUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        try:
+            target_user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        if target_user == request.user:
+            return Response({"error": "You cannot follow yourself"}, status=400)
+
+        if Follow.objects.filter(follower=request.user, following=target_user).exists():
+            return Response({"error": "Already following"}, status=400)
+
+        # Create follow relationship
+        follow = Follow.objects.create(follower=request.user, following=target_user)
+        
+        # Increment points (Social butterfly effect)
+        request.user.profile.points += 5
+        request.user.profile.save()
+
+        return Response({"message": f"You are now following {target_user.username}"})
+
+
+class UnfollowUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        try:
+            target_user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        deleted, _ = Follow.objects.filter(follower=request.user, following=target_user).delete()
+
+        if deleted:
+            return Response({"message": f"Unfollowed {target_user.username}"})
+        
+        return Response({"error": "Not following this user"}, status=400)

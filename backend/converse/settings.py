@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'communities',
     'recap',
     'channels',
+    'music',
+    'system',
 ]
 
 MIDDLEWARE = [
@@ -144,6 +146,12 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+}
+
+SPOTIFY = {
+    "CLIENT_ID": "your_spotify_client_id",
+    "CLIENT_SECRET": "your_spotify_client_secret",
+    "REDIRECT_URI": "http://127.0.0.1:8000/api/vault/spotify/callback/",
 }
 
 MEDIA_URL = "/media/"

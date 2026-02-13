@@ -61,11 +61,9 @@ def generate_most_likely_question(group):
 # START GAME
 # ---------------------------------------------------
 
-def start_game(group, game_type, secret_word=None):
+def start_game(group, game_type, prompt_text=None, secret_word=None):
 
-    prompt_text = None
-
-    if game_type == "most_likely_to":
+    if game_type == "most_likely_to" and not prompt_text:
         prompt_text = generate_most_likely_question(group)
 
     game = GameSession.objects.create(

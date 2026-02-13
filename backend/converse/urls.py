@@ -12,12 +12,14 @@ urlpatterns = [
     path('api/recap/', include('recap.urls')),
     path('api/games/', include('games.urls')),
     path('api/chatbot/', include('chatbot.urls')),
-    path('admin/', admin.site.urls),
+    path("api/groups/", include("groups.urls")),
+
     path("api/users/", include("users.urls")),
     path("api/social/", include("social.urls")),
     path("api/communities/", include("communities.urls")),
     path("api/vault/", include("vault.urls")),
-
+    path("api/music/", include("music.urls")),
+    path("api/system/", include("system.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
