@@ -15,6 +15,10 @@ class SeasonRecap(models.Model):
     most_chaotic_day = models.DateField(null=True, blank=True)
     longest_streak = models.IntegerField(default=0)
 
+    # Music DNA
+    dominant_vibe = models.CharField(max_length=100, blank=True, null=True)
+    anthem_track = models.JSONField(default=dict, blank=True) # Store full track data
+
     generated_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

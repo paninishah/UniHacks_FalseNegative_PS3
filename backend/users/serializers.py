@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, Profile
+from .models import User, Profile, Follow
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -43,6 +43,23 @@ class LoginSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
 
+    points = serializers.IntegerField(read_only=True)
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Profile
-        fields = ["bio", "profile_picture", "onboarding_completed"]
+        fields = ["bio", "profile_picture", "onboarding_completed", "points", "followers_count", "following_count"]
+
+    def get_followers_count(self, obj):
+        return obj.user.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.user.following.count()
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = "__all__"
+        read_only_fields = ["follower"]

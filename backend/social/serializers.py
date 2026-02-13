@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Reaction, Comment, SavedPost
-import random
-
+from converse.ai_services import generate_dramatic_headline
 
 class PostSerializer(serializers.ModelSerializer):
 
@@ -14,15 +13,14 @@ class PostSerializer(serializers.ModelSerializer):
 
         text = validated_data.get("text_content")
 
-        # Dramatic headline generator (template based)
+        # Dramatically Generate Headline via Gemini
         if text:
-            templates = [
-                f"🚨 BREAKING: {text[:60]}...",
-                f"🔥 CHAOS ALERT: {text[:60]}",
-                f"👀 SPOTTED: {text[:60]}",
-                f"💥 DRAMA DROP: {text[:60]}"
-            ]
-            validated_data["headline_generated"] = random.choice(templates)
+            try:
+                headline = generate_dramatic_headline(text)
+                validated_data["headline_generated"] = headline
+            except Exception as e:
+                # Fallback purely for safety
+                validated_data["headline_generated"] = f"Breaking: {text[:20]}..."
 
         validated_data["user"] = self.context["request"].user
 

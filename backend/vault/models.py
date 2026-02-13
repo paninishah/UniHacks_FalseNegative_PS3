@@ -129,3 +129,45 @@ class VaultPermission(models.Model):
 
     class Meta:
         unique_together = ("vault_item", "user")
+
+# =========================
+# MUSIC & EMOTIONAL ANALYSIS
+# =========================
+
+class CapsuleMusicAnalysis(models.Model):
+
+    VIBES = [
+        ("chaotic", "Chaotic"),
+        ("wholesome", "Wholesome"),
+        ("dramatic", "Dramatic"),
+        ("late_night", "Late Night Core"),
+        ("exam_survival", "Exam Survival"),
+        ("heartbreak", "Heartbreak Era"),
+        ("party", "Party Anthem"),
+        ("chill", "Chill Vibes"),
+    ]
+
+    capsule = models.OneToOneField(
+        TimeCapsule,
+        on_delete=models.CASCADE,
+        related_name="music_analysis"
+    )
+
+    dominant_vibe = models.CharField(max_length=50, choices=VIBES, default="chill")
+    
+    # Audio Feature Averages (0.0 - 1.0)
+    avg_valence = models.FloatField(default=0.5)
+    avg_energy = models.FloatField(default=0.5)
+    avg_danceability = models.FloatField(default=0.5)
+    
+    # Spotify Data
+    shared_anthem_track_id = models.CharField(max_length=100, null=True, blank=True)
+    generated_playlist_id = models.CharField(max_length=100, null=True, blank=True)
+    
+    # Stored as JSON: {"user_id": score, ...}
+    compatibility_heatmap = models.JSONField(default=dict)
+
+    analyzed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Analysis for {self.capsule} ({self.dominant_vibe})"

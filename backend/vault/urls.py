@@ -9,4 +9,5 @@ urlpatterns = [
     path("vault/create/", CreateVaultItemView.as_view()),
     path("vault/generate-token/", GenerateTokenView.as_view()),
     path("vault/grant/", GrantPermissionView.as_view()),
+    path("capsule/<int:capsule_id>/analyze-music/", AnalyzeCapsuleMusicView.as_view()),
 ]

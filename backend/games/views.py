@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from .services import (
     start_game,
     submit_vote,
-    calculate_most_likely_winner,
+    finish_most_likely,
     submit_guess,
     get_leaderboard
 )
@@ -46,9 +46,9 @@ class FinishMostLikelyView(APIView):
     def post(self, request, game_id):
         game = GameSession.objects.get(id=game_id)
 
-        winner = calculate_most_likely_winner(game)
+        result = finish_most_likely(game)
 
-        return Response({"winner": winner})
+        return Response(result)
 
 
 class SubmitGuessView(APIView):

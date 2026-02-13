@@ -57,6 +57,31 @@ def generate_recap(group, start_date, end_date):
 
     longest_streak = calculate_longest_streak(group, start_date, end_date)
 
+    # Music Intelligence Integration
+    from music.services import MusicIntelligence
+    
+    # 1. Gather all text from posts/messages to find song mentions (Naive approach + Defaulters)
+    # In a real app we'd parse content. For demo, we rotate through "Eras" based on activity level
+    
+    activity_level = total_activities
+    query_list = []
+    
+    if activity_level > 50:
+        query_list = ["Party in the USA", "I Gotta Feeling", "Levitating"] # High Energy
+    elif activity_level > 20:
+        query_list = ["Sweater Weather", "Ophelia", "Riptide"] # Indie/Chill
+    else:
+        query_list = ["The Sound of Silence", "Lonely", "Solo"] # Low Activity / Ghost Town
+        
+    music_profile = MusicIntelligence.analyze_group_taste(query_list)
+    
+    dominant_vibe = "Silence"
+    anthem_track = {}
+    
+    if music_profile:
+        dominant_vibe = music_profile["vibe"]
+        anthem_track = music_profile["anthem"]
+
     recap, created = SeasonRecap.objects.update_or_create(
         group=group,
         start_date=start_date,
@@ -68,6 +93,8 @@ def generate_recap(group, start_date, end_date):
             "most_active_user_id": most_active["user"] if most_active else None,
             "most_chaotic_day": most_chaotic_day,
             "longest_streak": longest_streak,
+            "dominant_vibe": dominant_vibe,
+            "anthem_track": anthem_track
         }
     )
 
