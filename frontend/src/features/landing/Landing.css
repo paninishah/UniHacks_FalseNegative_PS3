@@ -1,0 +1,81 @@
+.landing-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+.landing-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2;
+}
+
+.landing-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-container {
+    position: relative;
+    display: inline-block;
+}
+
+.landing-text {
+    display: block;
+    /* Adjust size as needed, starting with a reasonable default */
+    max-width: 80vw;
+    height: auto;
+}
+
+.landing-star {
+    position: absolute;
+    /* Adjust positioning based on the hole in "c nverse" */
+    top: 52%;
+    /* Center vertically relative to text? Needs fine tuning */
+    left: 21%;
+    /* Adjusted to center in 'o' gap */
+    transform: translate(-50%, -50%);
+    width: 14%;
+    /* Increased size */
+    height: auto;
+    cursor: pointer;
+    /* Interaction hint */
+}
+
+.arrow-container {
+    position: absolute;
+    top: 90%;
+    /* Moved up closer */
+    left: 25%;
+    /* Moved left closer */
+    margin-top: 5px;
+}
+
+.landing-arrow {
+    width: 100px;
+    /* Adjust size */
+    height: auto;
+}

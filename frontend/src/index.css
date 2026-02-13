@@ -1,0 +1,28 @@
+:root {
+  --color-purple: #72039C;
+  --color-red: #FC1F04;
+  --color-yellow: #FFFF00;
+  --color-pink: #FFFF00; /* User specified same code, keeping as is for now */
+  --bg-color: #000000;
+  --text-color: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif; /* Assuming Inter or similar */
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
