@@ -1,0 +1,224 @@
+.profile-container {
+    width: 100%;
+    max-width: 900px;
+    /* Constrain width for cleaner look */
+    margin: 0 auto;
+    color: var(--text-color);
+    padding-bottom: 50px;
+}
+
+/* BANNER */
+.profile-banner {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, var(--color-purple), #330044);
+    position: relative;
+    /* Sharp edges by default via global reset */
+}
+
+/* HEADER */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+    margin-top: -50px;
+    /* Overlap banner */
+    margin-bottom: 30px;
+}
+
+.profile-pfp-container {
+    margin-bottom: 15px;
+}
+
+.profile-pfp {
+    width: 120px;
+    height: 120px;
+    background-color: #000;
+    /* Placeholder black */
+    border: 4px solid var(--bg-color);
+    /* Cutout effect from bg */
+    border-radius: 0;
+    /* Sharp edges */
+    background-image: linear-gradient(135deg, #333 25%, transparent 25%),
+        linear-gradient(225deg, #333 25%, transparent 25%),
+        linear-gradient(45deg, #333 25%, transparent 25%),
+        linear-gradient(315deg, #333 25%, transparent 25%);
+    background-position: 10px 0, 10px 0, 0 0, 0 0;
+    background-size: 20px 20px;
+    background-repeat: repeat;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-names {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+.profile-username {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* STATS */
+.profile-stats {
+    display: flex;
+    gap: 30px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-value {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.stat-label {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* BIO */
+.profile-bio p {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 600px;
+}
+
+/* ACTIONS */
+.profile-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    border: 2px solid var(--text-color);
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+}
+
+.edit-btn:hover {
+    background-color: var(--color-purple);
+    border-color: var(--color-purple);
+    color: white;
+}
+
+.vault-btn {
+    border-color: var(--color-yellow);
+    color: var(--color-yellow);
+}
+
+.vault-btn:hover {
+    background-color: var(--color-yellow);
+    color: black;
+}
+
+/* TABS */
+.profile-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    border-top: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 15px 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    letter-spacing: 1px;
+    position: relative;
+    border-top: 2px solid transparent;
+    margin-top: -1px;
+    transition: color 0.2s ease;
+}
+
+.tab-btn.active {
+    color: var(--text-color);
+    border-top-color: var(--text-color);
+}
+
+.tab-btn:hover {
+    color: var(--text-color);
+}
+
+/* GRID */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.grid-item {
+    aspect-ratio: 1;
+    /* Square */
+    background-color: #222;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    position: relative;
+}
+
+.grid-item:hover {
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .profile-header {
+        align-items: center;
+        text-align: center;
+        margin-top: -60px;
+    }
+
+    .profile-pfp {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-stats {
+        gap: 20px;
+    }
+
+    .profile-actions {
+        justify-content: center;
+    }
+}

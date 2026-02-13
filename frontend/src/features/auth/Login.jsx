@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         identifier: '',
         password: '',
@@ -16,6 +17,7 @@ const Login = () => {
         e.preventDefault();
         console.log('Login submitted:', formData);
         // Add auth logic here
+        navigate('/feed');
     };
 
     return (
