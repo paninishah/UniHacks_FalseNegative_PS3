@@ -63,6 +63,17 @@
     height: auto;
     cursor: pointer;
     /* Interaction hint */
+    transition: transform 0.5s ease;
+    /* Smooth return if not fully zoomed */
+    z-index: 10;
+}
+
+.landing-star.zooming {
+    /* Scale up massively to fill the screen with the black center */
+    /* Rotate for the spin effect */
+    transform: translate(-50%, -50%) scale(150) rotate(720deg);
+    transition: transform 2.5s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    /* Accelerate in */
 }
 
 .arrow-container {

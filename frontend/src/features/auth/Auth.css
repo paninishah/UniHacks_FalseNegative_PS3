@@ -1,0 +1,117 @@
+.auth-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--bg-color-auth);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 450px;
+    /* border: 2px solid var(--color-purple); */
+    /* Optional border */
+    padding: 40px;
+    background-color: var(--bg-color-auth);
+    /* No border radius - sharp edges */
+}
+
+.auth-title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--color-pink);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.form-group input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--text-color);
+    padding: 10px 0;
+    color: var(--text-color);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-bottom-color: var(--color-purple);
+}
+
+.auth-button {
+    margin-top: 20px;
+    background-color: var(--color-purple);
+    color: var(--text-color);
+    border: none;
+    padding: 15px;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.auth-button:hover {
+    background-color: var(--color-red);
+}
+
+.auth-button:active {
+    transform: scale(0.98);
+}
+
+.auth-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.auth-footer p {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.auth-link {
+    color: var(--color-yellow);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
+    transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+    color: var(--color-red);
+    text-decoration: underline;
+}
+
+/* Specific input styles for date to handle icon color if possible */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}

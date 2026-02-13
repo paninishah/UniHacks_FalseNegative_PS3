@@ -2,21 +2,26 @@
   --color-purple: #72039C;
   --color-red: #FC1F04;
   --color-yellow: #FFFF00;
-  --color-pink: #FFFF00; /* User specified same code, keeping as is for now */
+  --color-pink: #FF00FF;
   --bg-color: #000000;
+  --bg-color-auth: #1E1E1E;
   --text-color: #FFFFFF;
+  --font-heading: "Josefin Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border-radius: 0 !important;
+  /* Enforce sharp edges */
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Inter', sans-serif; /* Assuming Inter or similar */
+  font-family: var(--font-body);
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
