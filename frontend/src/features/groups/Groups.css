@@ -1,0 +1,259 @@
+.groups-container {
+    padding: 20px;
+    padding-bottom: 100px;
+    max-width: 1000px;
+    margin: 0 auto;
+    color: var(--text-color);
+}
+
+/* HEADER DROPDOWN */
+.groups-header-bar {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.group-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: var(--bg-color-auth);
+    padding: 10px 20px;
+    border: 1px solid var(--color-purple);
+}
+
+.group-selector label {
+    font-family: var(--font-heading);
+    color: var(--color-yellow);
+    font-weight: 700;
+}
+
+.group-dropdown {
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+}
+
+.group-dropdown option {
+    background-color: black;
+}
+
+/* FEED GRID */
+.groups-feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    grid-auto-flow: dense;
+}
+
+.group-post {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+}
+
+.group-post.type-news-bite {
+    background: linear-gradient(135deg, rgba(114, 3, 156, 0.2), rgba(0, 0, 0, 0.5));
+    border-color: var(--color-pink);
+}
+
+.span-row-2 {
+    grid-row: span 2;
+}
+
+.span-col-2 {
+    grid-column: span 2;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.post-user {
+    color: var(--color-yellow);
+    font-weight: 700;
+}
+
+.post-text {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.post-img {
+    width: 100%;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #444;
+    margin-top: 10px;
+}
+
+/* FABs */
+.groups-fabs {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+}
+
+.fab-chat,
+.fab-games {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s;
+}
+
+.fab-chat:hover,
+.fab-games:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.5);
+}
+
+.fab-chat {
+    background-color: var(--color-purple);
+    border: 2px solid var(--color-purple);
+}
+
+.fab-games {
+    background-color: var(--color-purple);
+    /* PURPLE per request */
+    border: 2px solid var(--color-purple);
+}
+
+/* Icons */
+.fab-chat img,
+.fab-games img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* POPUPS */
+.chat-popup,
+.games-popup {
+    position: fixed;
+    right: 120px;
+    /* To the left of FABs */
+    background-color: #000;
+    border: 2px solid;
+    width: 300px;
+    height: 400px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* Chat Specifics */
+.chat-popup {
+    bottom: 40px;
+    /* Aligned with Chat FAB */
+    border-color: var(--color-purple);
+}
+
+.chat-header {
+    background-color: var(--color-purple);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.chat-body {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    padding: 8px;
+    background-color: #222;
+    border-left: 2px solid var(--color-purple);
+    font-size: 0.9rem;
+}
+
+.chat-message.outgoing {
+    align-self: flex-end;
+    background-color: rgba(114, 3, 156, 0.2);
+    border-left: none;
+    border-right: 2px solid var(--color-purple);
+}
+
+.chat-input {
+    padding: 10px;
+    border-top: 1px solid #333;
+}
+
+.chat-input input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #444;
+    padding: 8px;
+    color: white;
+}
+
+/* Games Specifics */
+.games-popup {
+    bottom: 120px;
+    /* Aligned with Games FAB */
+    border-color: var(--color-yellow);
+    height: 300px;
+}
+
+.games-header {
+    background-color: var(--color-yellow);
+    color: black;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.games-list {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game-item {
+    padding: 15px;
+    background-color: #222;
+    border: 1px solid #444;
+    text-align: center;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.game-item:hover {
+    background-color: var(--color-yellow);
+    color: black;
+}

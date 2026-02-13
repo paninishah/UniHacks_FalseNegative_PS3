@@ -1,28 +1,24 @@
 .profile-container {
     width: 100%;
     max-width: 900px;
-    /* Constrain width for cleaner look */
     margin: 0 auto;
     color: var(--text-color);
-    padding-bottom: 50px;
+    padding-bottom: 100px;
 }
 
-/* BANNER */
+/* BANNER & HEADER */
 .profile-banner {
     width: 100%;
     height: 200px;
     background: linear-gradient(45deg, var(--color-purple), #330044);
     position: relative;
-    /* Sharp edges by default via global reset */
 }
 
-/* HEADER */
 .profile-header {
     display: flex;
     flex-direction: column;
     padding: 0 20px;
     margin-top: -50px;
-    /* Overlap banner */
     margin-bottom: 30px;
 }
 
@@ -34,11 +30,8 @@
     width: 120px;
     height: 120px;
     background-color: #000;
-    /* Placeholder black */
     border: 4px solid var(--bg-color);
-    /* Cutout effect from bg */
     border-radius: 0;
-    /* Sharp edges */
     background-image: linear-gradient(135deg, #333 25%, transparent 25%),
         linear-gradient(225deg, #333 25%, transparent 25%),
         linear-gradient(45deg, #333 25%, transparent 25%),
@@ -74,7 +67,6 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* STATS */
 .profile-stats {
     display: flex;
     gap: 30px;
@@ -99,7 +91,6 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* BIO */
 .profile-bio p {
     font-family: var(--font-body);
     font-size: 0.95rem;
@@ -107,7 +98,6 @@
     max-width: 600px;
 }
 
-/* ACTIONS */
 .profile-actions {
     display: flex;
     gap: 15px;
@@ -132,12 +122,6 @@
     color: var(--bg-color);
 }
 
-.edit-btn:hover {
-    background-color: var(--color-purple);
-    border-color: var(--color-purple);
-    color: white;
-}
-
 .vault-btn {
     border-color: var(--color-yellow);
     color: var(--color-yellow);
@@ -151,10 +135,11 @@
 /* TABS */
 .profile-tabs {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 40px;
-    border-top: 1px solid #333;
-    margin-bottom: 20px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 0;
+    padding-left: 20px;
 }
 
 .tab-btn {
@@ -167,58 +152,302 @@
     cursor: pointer;
     letter-spacing: 1px;
     position: relative;
-    border-top: 2px solid transparent;
-    margin-top: -1px;
     transition: color 0.2s ease;
 }
 
 .tab-btn.active {
     color: var(--text-color);
-    border-top-color: var(--text-color);
 }
 
-.tab-btn:hover {
-    color: var(--text-color);
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-pink);
 }
 
-/* GRID */
-.profile-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+/* POSTS */
+.profile-posts-list {
+    display: flex;
+    flex-direction: column;
 }
 
-.grid-item {
-    aspect-ratio: 1;
-    /* Square */
-    background-color: #222;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
+.post-item {
+    padding: 30px 20px;
     position: relative;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
 }
 
-.grid-item:hover {
-    opacity: 0.8;
+.post-divider {
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-purple), transparent);
+    opacity: 0.3;
 }
 
-/* Responsive adjustments */
+.post-type-text .post-text-container {
+    width: 100%;
+}
+
+.post-text {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.post-type-image {
+    flex-direction: row;
+}
+
+.post-image-container {
+    width: 40%;
+    min-width: 200px;
+}
+
+.post-image-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-color: #333;
+    border-left: 3px solid var(--color-red);
+}
+
+.post-content-container {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.post-caption {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.post-date {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    color: var(--color-purple);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* CREATE POST FAB */
+.create-post-fab {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-yellow);
+    /* YELLOW per request */
+    border: 2px solid var(--color-yellow);
+    border-radius: 0 !important;
+    cursor: pointer;
+    display: grid;
+    /* Center content */
+    place-items: center;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+    z-index: 1001;
+    padding: 0;
+}
+
+.create-post-fab:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+    border-color: #fff;
+    color: black;
+}
+
+.fab-icon-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 500px;
+    background-color: var(--bg-color-auth);
+    padding: 30px;
+    border: 2px solid var(--color-purple);
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+.modal-title {
+    font-family: var(--font-heading);
+    color: var(--color-yellow);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+/* Modal Tabs */
+.cp-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.cp-tab {
+    background: transparent;
+    border: none;
+    padding: 10px 5px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.cp-tab.active {
+    color: var(--color-pink);
+    border-bottom-color: var(--color-pink);
+}
+
+.cp-textarea {
+    width: 100%;
+    height: 150px;
+    background-color: transparent;
+    border: 1px solid #333;
+    color: white;
+    padding: 15px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 20px;
+}
+
+.cp-textarea:focus {
+    border-color: var(--color-pink);
+    outline: none;
+}
+
+/* Image Post Styles in Modal */
+.cp-image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.cp-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #555;
+    padding: 10px 0;
+    color: white;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+}
+
+.cp-input:focus {
+    border-bottom-color: var(--color-yellow);
+}
+
+.cp-divider {
+    text-align: center;
+    font-family: var(--font-heading);
+    color: #666;
+    font-size: 0.8rem;
+    margin: 5px 0;
+}
+
+.cp-file-upload {
+    display: block;
+    text-align: center;
+    border: 1px dashed #555;
+    padding: 20px;
+    font-family: var(--font-heading);
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cp-file-upload:hover {
+    border-color: var(--color-purple);
+    color: var(--color-purple);
+}
+
+.cp-textarea.caption {
+    height: 80px;
+    margin-bottom: 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.modal-btn {
+    padding: 10px 25px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+
+.modal-btn.cancel {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-btn.cancel:hover {
+    color: white;
+}
+
+.modal-btn.post {
+    background-color: var(--color-purple);
+    color: white;
+    border: 2px solid var(--color-purple);
+}
+
+.modal-btn.post:hover {
+    background-color: var(--color-pink);
+    border-color: var(--color-pink);
+    color: black;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
-    .profile-header {
-        align-items: center;
-        text-align: center;
-        margin-top: -60px;
+    .image-post-container {
+        flex-direction: column;
     }
 
-    .profile-pfp {
-        width: 100px;
-        height: 100px;
-    }
-
-    .profile-stats {
-        gap: 20px;
-    }
-
-    .profile-actions {
-        justify-content: center;
+    .create-post-fab {
+        bottom: 20px;
+        right: 20px;
     }
 }
