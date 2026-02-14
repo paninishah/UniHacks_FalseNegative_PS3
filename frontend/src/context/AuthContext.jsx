@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import client from '../api/client';
 import { ENDPOINTS } from '../api/endpoints';
+import authAPI from '../services/authAPI';
 
 const AuthContext = createContext(null);
 
@@ -30,30 +31,27 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (identifier, password) => {
         try {
-            const response = await client.post(ENDPOINTS.AUTH.LOGIN, {
-                username: identifier, // Backend typically expects username, but UI says username/email. 
-                // Adjust backend payload if necessary. For now, sending as username. 
-                // Wait, Django `LoginView` usually takes username/password.
-                password: password
-            });
-            const { token, user: userData } = response.data;
+            const data = await authAPI.login(identifier, password);
+            const { token, user: userData } = data;
             localStorage.setItem('token', token);
             setUser(userData);
             return { success: true };
         } catch (error) {
             console.error("Login failed", error);
+            const errorMsg = error.response?.data?.detail
+                || error.response?.data?.non_field_errors?.[0]
+                || error.response?.data?.error
+                || 'Login failed';
             return {
                 success: false,
-                error: error.response?.data?.detail || 'Login failed'
+                error: errorMsg
             };
         }
     };
 
     const register = async (userData) => {
         try {
-            await client.post(ENDPOINTS.AUTH.REGISTER, userData);
-            // Auto login after register or just redirect? 
-            // Usually redirect to login, let's keep it simple.
+            await authAPI.register(userData);
             return { success: true };
         } catch (error) {
             console.error("Registration failed", error);

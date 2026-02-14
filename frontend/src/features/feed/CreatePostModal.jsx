@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import client from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
+import feedAPI from '../../services/feedAPI';
 import './CreatePostModal.css';
 
 const CreatePostModal = ({ isOpen, onClose, onSuccess }) => {
@@ -43,11 +44,7 @@ const CreatePostModal = ({ isOpen, onClose, onSuccess }) => {
         }
 
         try {
-            await client.post(ENDPOINTS.SOCIAL.CREATE, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            await feedAPI.createPost(formData);
             onSuccess();
             onClose();
             // Reset state

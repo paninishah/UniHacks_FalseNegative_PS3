@@ -49,3 +49,19 @@ class UserNotificationsView(APIView):
         notifications = Notification.objects.filter(user=request.user)
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data)
+
+
+class EngagementIndexView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "status": "online",
+            "module": "Engagement Engine",
+            "endpoints": [
+                "/api/engagement/inactivity/<group_id>/",
+                "/api/engagement/deliver-prompt/<group_id>/",
+                "/api/engagement/engagement-drop/<group_id>/",
+                "/api/engagement/notifications/"
+            ]
+        })

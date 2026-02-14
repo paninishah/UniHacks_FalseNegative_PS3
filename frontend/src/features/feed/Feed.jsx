@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Feed.css';
 import client from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
+import feedAPI from '../../services/feedAPI';
 import CreatePostModal from './CreatePostModal';
 import CommentsModal from './CommentsModal';
 
@@ -28,13 +29,13 @@ const Feed = () => {
     const fetchFeed = async () => {
         setLoading(true);
         try {
-            const response = await client.get(ENDPOINTS.SOCIAL.FEED);
-            const mappedPosts = response.data.map((post, index) => ({
+            const data = await feedAPI.getFeed();
+            const mappedPosts = data.map((post, index) => ({
                 id: post.id,
                 user: {
                     name: post.user.name,
                     username: `@${post.user.username}`,
-                    pfp: post.user.email ? `https://ui-avatars.com/api/?name=${post.user.name}&background=random` : '' // Fallback pfp
+                    pfp: post.user.profile_picture || (post.user.email ? `https://ui-avatars.com/api/?name=${post.user.name}&background=random` : '')
                 },
                 type: post.category, // Backend category matches frontend type mostly
                 content: post.text_content,
@@ -60,10 +61,7 @@ const Feed = () => {
 
     const handleReaction = async (postId, reactionType) => {
         try {
-            await client.post(ENDPOINTS.SOCIAL.REACT, {
-                post: postId,
-                reaction_type: reactionType
-            });
+            await feedAPI.reactToPost(postId, reactionType);
             // Optimistic update or refetch? Refetch for accuracy for now.
             fetchFeed();
         } catch (error) {

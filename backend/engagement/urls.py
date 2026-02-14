@@ -3,7 +3,9 @@ from .views import (
     InactivityCheckView,
     DeliverPromptView,
     EngagementDropView,
-    UserNotificationsView
+    EngagementDropView,
+    UserNotificationsView,
+    EngagementIndexView
 )
 
 urlpatterns = [
@@ -11,4 +13,5 @@ urlpatterns = [
     path("deliver-prompt/<int:group_id>/", DeliverPromptView.as_view()),
     path("engagement-drop/<int:group_id>/", EngagementDropView.as_view()),
     path("notifications/", UserNotificationsView.as_view()),
+    path("", EngagementIndexView.as_view()),
 ]

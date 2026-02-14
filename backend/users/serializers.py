@@ -46,19 +46,23 @@ class ProfileSerializer(serializers.ModelSerializer):
     points = serializers.IntegerField(read_only=True)
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
+    posts_count = serializers.SerializerMethodField()
     username = serializers.CharField(source="user.username", read_only=True)
     name = serializers.SerializerMethodField()
     id = serializers.IntegerField(source="user.id", read_only=True)
 
     class Meta:
         model = Profile
-        fields = ["id", "username", "name", "bio", "profile_picture", "onboarding_completed", "points", "followers_count", "following_count"]
+        fields = ["id", "username", "name", "bio", "profile_picture", "onboarding_completed", "points", "followers_count", "following_count", "posts_count"]
 
     def get_followers_count(self, obj):
         return obj.user.followers.count()
 
     def get_following_count(self, obj):
         return obj.user.following.count()
+
+    def get_posts_count(self, obj):
+        return obj.user.posts.filter(is_deleted=False).count()
 
     def get_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}".strip() or obj.user.username
@@ -75,7 +79,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["username", "name", "email"] # email as pfp fallback seed?
+        fields = ["id", "username", "name", "email"] # email as pfp fallback seed?
 
     def get_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip() or obj.username

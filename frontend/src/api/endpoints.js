@@ -3,6 +3,7 @@ export const ENDPOINTS = {
         LOGIN: '/api/users/login/',
         REGISTER: '/api/users/signup/',
         PROFILE: '/api/users/profile/',
+        PROFILE_ID: (id) => `/api/users/profile/${id}/`,
         FOLLOW: (id) => `/api/users/follow/${id}/`,
         UNFOLLOW: (id) => `/api/users/unfollow/${id}/`,
     },
@@ -27,6 +28,7 @@ export const ENDPOINTS = {
     },
     GAMES: {
         START: (id) => `/api/games/start/${id}/`,
+        DETAILS: (id) => `/api/games/${id}/`,
         VOTE: (id) => `/api/games/vote/${id}/`,
         FINISH_MOST_LIKELY: (id) => `/api/games/finish-most-likely/${id}/`,
         GUESS: (id) => `/api/games/guess/${id}/`,

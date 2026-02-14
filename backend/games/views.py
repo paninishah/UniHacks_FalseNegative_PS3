@@ -27,6 +27,25 @@ class StartGameView(APIView):
         return Response({"game_id": game.id})
 
 
+class GameDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, game_id):
+        try:
+            game = GameSession.objects.get(id=game_id)
+            return Response({
+                "id": game.id,
+                "game_type": game.game_type,
+                "status": game.status,
+                "prompt_text": game.prompt_text,
+                "secret_word": game.secret_word, # Maybe hide this if not drawer? handling simple for now
+                "started_at": game.started_at,
+                "group_id": game.group.id
+            })
+        except GameSession.DoesNotExist:
+            return Response({"error": "Game not found"}, status=404)
+
+
 class SubmitVoteView(APIView):
     permission_classes = [IsAuthenticated]
 

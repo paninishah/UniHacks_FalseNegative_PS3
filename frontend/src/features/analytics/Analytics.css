@@ -1,0 +1,85 @@
+.analytics-container {
+    padding: 40px 20px;
+    color: white;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Outfit', sans-serif;
+}
+
+.analytics-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 136, 0.5);
+}
+
+.card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.heat-card h2 {
+    color: #ff9900;
+}
+
+.dna-card h2 {
+    color: #ff0055;
+}
+
+.stats-card h2 {
+    color: #00ff88;
+}
+
+.heatmap-container,
+.dna-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.vitals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.vital-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.vital-item span:first-child {
+    color: #888;
+}
+
+.vital-item span:last-child {
+    font-weight: bold;
+    color: white;
+}

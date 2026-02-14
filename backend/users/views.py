@@ -2,7 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer, UserSummarySerializer
 from .models import Profile
 
 
@@ -24,8 +24,10 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
 
             return Response({
+                "access": str(refresh.access_token), # standard
+                "token": str(refresh.access_token),  # frontend alias
                 "refresh": str(refresh),
-                "access": str(refresh.access_token)
+                "user": UserSummarySerializer(user).data
             })
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -56,14 +58,21 @@ class PublicProfileView(APIView):
 
     def get(self, request, user_id):
         try:
-            user = User.objects.get(id=user_id)
-            profile = Profile.objects.get(user=user)
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except User.DoesNotExist:
+            target_user = User.objects.get(id=user_id)
+            profile = Profile.objects.get(user=target_user)
+        except (User.DoesNotExist, Profile.DoesNotExist):
             return Response({"error": "User not found"}, status=404)
-        except Profile.DoesNotExist:
-            return Response({"error": "Profile not found"}, status=404)
+
+        serializer = ProfileSerializer(profile)
+        data = serializer.data
+        data['username'] = target_user.username
+        data['name'] = target_user.first_name or target_user.username
+        data['id'] = target_user.id
+        
+        # Check following status
+        data['is_following'] = Follow.objects.filter(follower=request.user, following=target_user).exists()
+        
+        return Response(data)
 
 
 from .models import Follow, User

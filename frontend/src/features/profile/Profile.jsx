@@ -1,68 +1,40 @@
+import authAPI from '../../services/authAPI';
+import feedAPI from '../../services/feedAPI';
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import fullLogo from '../../assets/icons/converse_full.svg';
-import starIcon from '../../assets/icons/landing_star.svg';
-import postIcon from '../../assets/icons/navbar/post.svg';
-import './Profile.css';
-import client from '../../api/client';
-import { ENDPOINTS } from '../../api/endpoints';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import CreatePostModal from '../feed/CreatePostModal';
+import postIcon from '../../assets/icons/fab_post.svg';
+import './Profile.css';
 
 const Profile = () => {
-    const navigate = useNavigate();
     const { userId } = useParams();
-    const { user: currentUser } = useAuth();
-    const [isCreateModalOpen, setCreateModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('text'); // 'text' | 'image'
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const isOwnProfile = !userId || (user && user.id === parseInt(userId));
 
     const [profileUser, setProfileUser] = useState(null);
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [isFollowing, setIsFollowing] = useState(false);
-
-    const isOwnProfile = !userId || (currentUser && currentUser.id === parseInt(userId));
+    const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchProfileData = async () => {
             setLoading(true);
             try {
-                // Determine which endpoint to call. 
-                // If isOwnProfile, calls /api/users/profile/ (which returns own profile)
-                // If other user, we might need a specific endpoint like /api/users/profile/id/
-                // Checking backend urls: path("profile/", ProfileView.as_view()),
-                // It seems ProfileView only returns own profile?
-                // I need to check if ProfileView handles GET with a query param or if there's another view.
-                // Looking at exploration, only `profile/` exists.
-                // I might need to update the backend or use `profile/` for own and create a new one for others?
-                // Or maybe `ProfileView` handles it?
-                // Let's assume for now I can only view my own profile until I confirm backend.
-                // Wait, the plan said "Fetch profile data".
-                // I will use /api/users/profile/ for own.
-                // For others, I need to check `users/views.py`.
-
-                // For now, let's just implement for own profile using /api/users/profile/
-                // passing userId might not work if backend doesn't support it yet.
-                // But the requirement says "Profile creation... Follow/Unfollow".
-
-                // let's try to fetch /api/users/profile/
+                let data;
                 if (isOwnProfile) {
-                    const response = await client.get(ENDPOINTS.AUTH.PROFILE);
-                    setProfileUser(response.data);
-                    // setPosts(response.data.posts); // Assuming posts are returned or separate endpoint?
-                    // Usually separate feed endpoint for user posts.
+                    data = await authAPI.getProfile();
                 } else {
-                    // Placeholder for other user fetch if endpoint exists
-                    // const response = await client.get(`/api/users/${userId}/`);
+                    data = await authAPI.getPublicProfile(userId);
                 }
+                setProfileUser(data);
+                setIsFollowing(data.is_following);
 
-                // Fetch User Posts
-                // Need an endpoint for user posts.
-                // `social/feed/` is usually global or friends.
-                // I might need `social/user-posts/<id>/` ?
-                // Let's check `social/views.py` later. 
-                // For now, I'll mock the posts fetch with a comment.
-
+                // Fetch user posts
+                const userPosts = await feedAPI.getUserPosts(isOwnProfile ? user.id : userId);
+                setPosts(userPosts);
             } catch (error) {
                 console.error("Failed to fetch profile", error);
             } finally {
@@ -76,11 +48,16 @@ const Profile = () => {
         if (!profileUser) return;
         try {
             if (isFollowing) {
-                await client.post(ENDPOINTS.AUTH.UNFOLLOW(profileUser.id));
+                await authAPI.unfollowUser(profileUser.id);
             } else {
-                await client.post(ENDPOINTS.AUTH.FOLLOW(profileUser.id));
+                await authAPI.followUser(profileUser.id);
             }
             setIsFollowing(!isFollowing);
+            // Verify if we need to update followers count locally
+            setProfileUser(prev => ({
+                ...prev,
+                followers_count: isFollowing ? prev.followers_count - 1 : prev.followers_count + 1
+            }));
         } catch (error) {
             console.error("Follow action failed", error);
         }

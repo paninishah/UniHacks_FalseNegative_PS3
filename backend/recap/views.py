@@ -45,3 +45,17 @@ class GetRecapView(APIView):
             "most_chaotic_day": recap.most_chaotic_day,
             "longest_streak": recap.longest_streak,
         })
+
+
+class RecapIndexView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "status": "online",
+            "module": "Season Recap",
+            "endpoints": [
+                "/api/recap/generate/<group_id>/",
+                "/api/recap/latest/<group_id>/"
+            ]
+        })

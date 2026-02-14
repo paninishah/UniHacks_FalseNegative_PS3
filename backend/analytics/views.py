@@ -56,3 +56,18 @@ class MemoryHeatmapView(APIView):
             }
             for item in data
         ])
+
+
+class AnalyticsIndexView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "status": "online",
+            "module": "Analytics Engine",
+            "endpoints": [
+                "/api/analytics/group/<id>/",
+                "/api/analytics/group/<id>/dna/",
+                "/api/analytics/group/<id>/heatmap/"
+            ]
+        })

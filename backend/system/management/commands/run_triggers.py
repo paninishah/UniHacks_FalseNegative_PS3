@@ -5,7 +5,7 @@ from datetime import timedelta
 from social.models import Post, EphemeralEventLog
 from vault.models import TimeCapsule
 from engagement.models import Notification
-from groups.models import Group, GroupMember
+from groups.models import Group, GroupMembership
 from engagement.services import auto_trigger_engagement
 import logging
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                 
                 # Notify Group Members if group capsule
                 if capsule.group:
-                    members = GroupMember.objects.filter(group=capsule.group)
+                    members = GroupMembership.objects.filter(group=capsule.group)
                     for member in members:
                          Notification.objects.create(
                             user=member.user,

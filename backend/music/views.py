@@ -36,3 +36,15 @@ class SearchTrackView(APIView):
             return Response({"error": "Track not found"}, status=404)
             
         return Response(track)
+
+
+class MusicIndexView(APIView):
+    def get(self, request):
+        return Response({
+            "status": "online",
+            "module": "Music Intelligence",
+            "endpoints": [
+                "/api/music/analyze/",
+                "/api/music/search/"
+            ]
+        })

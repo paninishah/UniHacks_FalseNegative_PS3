@@ -13,6 +13,10 @@ import Analytics from '../features/analytics/Analytics';
 import Notifications from '../features/notifications/Notifications';
 import Profile from '../features/profile/Profile';
 import ProtectedRoute from './ProtectedRoute';
+import GameLobby from '../features/games/GameLobby';
+import MostLikelyTo from '../features/games/MostLikelyTo';
+import Skribbl from '../features/games/Skribbl';
+import RecapPage from '../features/recap/RecapPage';
 
 const AppRoutes = () => {
     return (
@@ -30,10 +34,15 @@ const AppRoutes = () => {
                     <Route path="/groups/:groupId" element={<GroupDetails />} />
                     <Route path="/communities" element={<Communities />} />
                     <Route path="/vault" element={<Vault />} />
+                    <Route path="/recap" element={<RecapPage />} />
                     <Route path="/analytics" element={<Analytics />} />
                     <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/profile/:userId" element={<Profile />} />
+                    <Route path="/profile/:userId?" element={<Profile />} />
+
+                    {/* Games Routes */}
+                    <Route path="/games" element={<GameLobby />} />
+                    <Route path="/games/most_likely_to/:sessionId" element={<MostLikelyTo />} />
+                    <Route path="/games/skribbl/:sessionId" element={<Skribbl />} />
                 </Route>
             </Route>
         </Routes>
