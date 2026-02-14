@@ -3,8 +3,6 @@ import feedAPI from '../../services/feedAPI';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import CreatePostModal from '../feed/CreatePostModal';
-import postIcon from '../../assets/icons/fab_post.svg';
 import './Profile.css';
 
 const Profile = () => {
@@ -15,9 +13,14 @@ const Profile = () => {
 
     const [profileUser, setProfileUser] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
+
+    // Edit Profile state
+    const [isEditOpen, setEditOpen] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [editBio, setEditBio] = useState('');
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -32,9 +35,8 @@ const Profile = () => {
                 setProfileUser(data);
                 setIsFollowing(data.is_following);
 
-                // Fetch user posts
                 const userPosts = await feedAPI.getUserPosts(isOwnProfile ? user.id : userId);
-                setPosts(userPosts);
+                setPosts(Array.isArray(userPosts) ? userPosts : []);
             } catch (error) {
                 console.error("Failed to fetch profile", error);
             } finally {
@@ -53,7 +55,6 @@ const Profile = () => {
                 await authAPI.followUser(profileUser.id);
             }
             setIsFollowing(!isFollowing);
-            // Verify if we need to update followers count locally
             setProfileUser(prev => ({
                 ...prev,
                 followers_count: isFollowing ? prev.followers_count - 1 : prev.followers_count + 1
@@ -63,10 +64,48 @@ const Profile = () => {
         }
     };
 
+    const openEditModal = () => {
+        setEditName(profileUser?.name || profileUser?.username || '');
+        setEditBio(profileUser?.bio || '');
+        setEditOpen(true);
+    };
+
+    const handleSaveProfile = async () => {
+        setSaving(true);
+        try {
+            const updated = await authAPI.updateProfile({ name: editName, bio: editBio });
+            setProfileUser(prev => ({ ...prev, ...updated }));
+            setEditOpen(false);
+        } catch (error) {
+            console.error("Save profile failed", error);
+            alert("Could not save profile. Try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
+    const getCategoryBadge = (category) => {
+        const map = {
+            meme: { label: 'MEME', color: '#00ff88' },
+            roast: { label: 'ROAST', color: '#ff4444' },
+            confession: { label: 'CONFESSION', color: '#a18cd1' },
+            joke: { label: 'JOKE', color: '#FFD700' },
+            inside_joke: { label: 'INSIDE JOKE', color: '#ff8800' },
+            casual: { label: 'CASUAL', color: '#888' },
+            news_bite: { label: 'NEWS BITE', color: '#00cbff' },
+        };
+        return map[category] || { label: category?.toUpperCase() || '', color: '#888' };
+    };
+
     if (loading) return <div className="loading-screen">LOADING...</div>;
     if (!profileUser && isOwnProfile) return <div className="error-screen">FAILED TO LOAD PROFILE</div>;
 
-    // Fallback for profileUser if other user fetch not implemented yet
     const displayUser = profileUser || { username: 'Unknown', name: 'Unknown' };
 
     return (
@@ -88,7 +127,7 @@ const Profile = () => {
 
                     <div className="profile-stats">
                         <div className="stat-item">
-                            <span className="stat-value">{displayUser.posts_count || 0}</span>
+                            <span className="stat-value">{displayUser.posts_count || posts.length || 0}</span>
                             <span className="stat-label">POSTS</span>
                         </div>
                         <div className="stat-item">
@@ -108,7 +147,7 @@ const Profile = () => {
                     <div className="profile-actions">
                         {isOwnProfile ? (
                             <>
-                                <button className="action-btn edit-btn">EDIT PROFILE</button>
+                                <button className="action-btn edit-btn" onClick={openEditModal}>EDIT PROFILE</button>
                                 <button className="action-btn vault-btn" onClick={() => navigate('/vault')}>
                                     OPEN VAULT 🔒
                                 </button>
@@ -118,62 +157,107 @@ const Profile = () => {
                                 {isFollowing ? 'UNFOLLOW' : 'FOLLOW'}
                             </button>
                         )}
-
                     </div>
                 </div>
             </div>
 
-            {/* Tabs (Single active tab for now) */}
+            {/* Tabs */}
             <div className="profile-tabs">
                 <button className="tab-btn active">POSTS</button>
             </div>
 
-            {/* Posts List */}
+            {/* Posts List — Tumblr-style rows */}
             <div className="profile-posts-list">
-                {posts.length > 0 ? posts.map((post) => (
-                    <div key={post.id} className={`post-item post-type-${post.type}`}>
-                        {/* Existing Post Rendering Logic - keeping it for now until we have real data structure */}
-                        {post.type === 'image' ? (
-                            <>
-                                <div className="post-image-container">
-                                    {post.imageUrl && <img src={post.imageUrl} alt="Post" className="post-image" />}
+                {posts.length > 0 ? posts.map((post) => {
+                    const isImage = post.post_type === 'image' && post.image;
+                    const badge = getCategoryBadge(post.category);
+
+                    return (
+                        <div key={post.id} className={`profile-post-row ${isImage ? 'image-row' : 'text-row'}`}>
+                            {isImage ? (
+                                <>
+                                    <div className="post-img-side">
+                                        <img src={post.image} alt="Post" className="post-full-image" />
+                                    </div>
+                                    <div className="post-caption-side">
+                                        <span className="post-category-badge" style={{ color: badge.color, borderColor: badge.color }}>
+                                            {badge.label}
+                                        </span>
+                                        <p className="post-caption-text">{post.caption || post.text_content || ''}</p>
+                                        <div className="post-meta-row">
+                                            <span className="post-date">{formatDate(post.created_at)}</span>
+                                            {post.reactions && (
+                                                <span className="post-reactions-mini">
+                                                    {post.reactions.goat > 0 && `🐐${post.reactions.goat} `}
+                                                    {post.reactions.iconic > 0 && `✨${post.reactions.iconic} `}
+                                                    {post.reactions.clown > 0 && `🤡${post.reactions.clown}`}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="post-text-full">
+                                    <span className="post-category-badge" style={{ color: badge.color, borderColor: badge.color }}>
+                                        {badge.label}
+                                    </span>
+                                    <p className="post-body">{post.text_content || ''}</p>
+                                    {post.headline_generated && (
+                                        <p className="post-headline">{post.headline_generated}</p>
+                                    )}
+                                    <div className="post-meta-row">
+                                        <span className="post-date">{formatDate(post.created_at)}</span>
+                                        {post.reactions && (
+                                            <span className="post-reactions-mini">
+                                                {post.reactions.goat > 0 && `🐐${post.reactions.goat} `}
+                                                {post.reactions.iconic > 0 && `✨${post.reactions.iconic} `}
+                                                {post.reactions.clown > 0 && `🤡${post.reactions.clown}`}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="post-content-container">
-                                    <p className="post-caption">{post.caption}</p>
-                                    <span className="post-date">{post.created_at}</span>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="post-text-container">
-                                <p className="post-text">{post.content}</p>
-                                <span className="post-date">{post.created_at}</span>
-                            </div>
-                        )}
-                        <div className="post-divider"></div>
-                    </div>
-                )) : (
+                            )}
+                        </div>
+                    );
+                }) : (
                     <div className="no-posts">NO POSTS YET</div>
                 )}
             </div>
 
-            {/* Create Post FAB */}
-            {isOwnProfile && (
-                <button
-                    className="create-post-fab"
-                    onClick={() => setCreateModalOpen(true)}
-                >
-                    <img src={postIcon} alt="Post" className="fab-icon-img" />
-                </button>
+            {/* Edit Profile Modal */}
+            {isEditOpen && (
+                <div className="modal-overlay" onClick={() => setEditOpen(false)}>
+                    <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="edit-modal-title">EDIT PROFILE</h2>
+                        <div className="edit-field">
+                            <label>Display Name</label>
+                            <input
+                                type="text"
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                placeholder="Your display name"
+                                className="edit-input"
+                            />
+                        </div>
+                        <div className="edit-field">
+                            <label>Bio</label>
+                            <textarea
+                                value={editBio}
+                                onChange={(e) => setEditBio(e.target.value)}
+                                placeholder="Tell people about yourself..."
+                                className="edit-textarea"
+                                rows={4}
+                            />
+                        </div>
+                        <div className="edit-actions">
+                            <button className="modal-btn cancel" onClick={() => setEditOpen(false)}>CANCEL</button>
+                            <button className="modal-btn save" onClick={handleSaveProfile} disabled={saving}>
+                                {saving ? 'SAVING...' : 'SAVE'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
-
-            {/* Create Post Modal */}
-            <CreatePostModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setCreateModalOpen(false)}
-                onSuccess={() => {
-                    window.location.reload();
-                }}
-            />
         </div>
     );
 };

@@ -169,115 +169,139 @@
     background-color: var(--color-pink);
 }
 
-/* POSTS */
+/* ======================= */
+/* TUMBLR-STYLE POST ROWS  */
+/* ======================= */
 .profile-posts-list {
     display: flex;
     flex-direction: column;
 }
 
-.post-item {
-    padding: 30px 20px;
+.profile-post-row {
+    padding: 28px 24px;
     position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.15s ease;
+}
+
+.profile-post-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* === Text Post Row — full width === */
+.text-row {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
 }
 
-.post-divider {
-    position: absolute;
-    bottom: 0;
-    left: 20px;
-    right: 20px;
-    height: 1px;
-    background: linear-gradient(90deg, var(--color-purple), transparent);
-    opacity: 0.3;
-}
-
-.post-type-text .post-text-container {
+.post-text-full {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.post-text {
+.post-body {
     font-family: var(--font-body);
     font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 10px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.92);
+    word-break: break-word;
 }
 
-.post-type-image {
-    flex-direction: row;
+.post-headline {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    color: var(--color-purple);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    border-left: 2px solid var(--color-purple);
+    padding-left: 10px;
+    margin-top: 2px;
 }
 
-.post-image-container {
-    width: 40%;
-    min-width: 200px;
+/* === Image Post Row — img left, caption right === */
+.image-row {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
 }
 
-.post-image-placeholder {
+.post-img-side {
+    flex: 0 0 45%;
+    max-width: 380px;
+    overflow: hidden;
+    background: #111;
+    border-left: 3px solid var(--color-pink);
+}
+
+.post-full-image {
     width: 100%;
-    aspect-ratio: 16/9;
-    background-color: #333;
-    border-left: 3px solid var(--color-red);
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.post-content-container {
-    width: 60%;
+.post-caption-side {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 12px;
+    padding: 8px 0;
 }
 
-.post-caption {
+.post-caption-text {
     font-family: var(--font-body);
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+/* === Shared elements === */
+.post-category-badge {
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border: 1px solid;
+    display: inline-block;
+    width: fit-content;
+}
+
+.post-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
 }
 
 .post-date {
     font-family: var(--font-heading);
-    font-size: 0.8rem;
-    color: var(--color-purple);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.35);
     font-weight: 700;
     letter-spacing: 0.5px;
 }
 
-/* CREATE POST FAB */
-.create-post-fab {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    width: 60px;
-    height: 60px;
-    background-color: var(--color-yellow);
-    /* YELLOW per request */
-    border: 2px solid var(--color-yellow);
-    border-radius: 0 !important;
-    cursor: pointer;
-    display: grid;
-    /* Center content */
-    place-items: center;
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease;
-    z-index: 1001;
-    padding: 0;
+.post-reactions-mini {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-body);
 }
 
-.create-post-fab:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.5);
-    background-color: #fff;
-    border-color: #fff;
-    color: black;
+.no-posts {
+    padding: 60px 20px;
+    text-align: center;
+    font-family: var(--font-heading);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+    letter-spacing: 2px;
 }
 
-.fab-icon-img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-}
-
-/* MODAL */
+/* ======================= */
+/* EDIT PROFILE MODAL      */
+/* ======================= */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -292,122 +316,77 @@
     backdrop-filter: blur(5px);
 }
 
-.modal-content {
+.edit-modal {
     width: 90%;
-    max-width: 500px;
-    background-color: var(--bg-color-auth);
-    padding: 30px;
+    max-width: 480px;
+    background-color: #0a0a0a;
+    padding: 32px;
     border: 2px solid var(--color-purple);
-    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.6);
 }
 
-.modal-title {
+.edit-modal-title {
     font-family: var(--font-heading);
     color: var(--color-yellow);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     letter-spacing: 2px;
+    font-size: 1.2rem;
 }
 
-/* Modal Tabs */
-.cp-tabs {
-    display: flex;
-    gap: 15px;
+.edit-field {
     margin-bottom: 20px;
-    border-bottom: 1px solid #333;
 }
 
-.cp-tab {
-    background: transparent;
-    border: none;
-    padding: 10px 5px;
+.edit-field label {
+    display: block;
     font-family: var(--font-heading);
-    font-weight: 700;
+    font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    font-size: 1rem;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
-.cp-tab.active {
-    color: var(--color-pink);
-    border-bottom-color: var(--color-pink);
-}
-
-.cp-textarea {
+.edit-input {
     width: 100%;
-    height: 150px;
-    background-color: transparent;
+    padding: 12px;
+    background: transparent;
     border: 1px solid #333;
     color: white;
-    padding: 15px;
     font-family: var(--font-body);
     font-size: 1rem;
-    resize: none;
-    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
-.cp-textarea:focus {
+.edit-input:focus {
     border-color: var(--color-pink);
     outline: none;
 }
 
-/* Image Post Styles in Modal */
-.cp-image-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.cp-input {
-    background-color: transparent;
-    border: none;
-    border-bottom: 1px solid #555;
-    padding: 10px 0;
+.edit-textarea {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #333;
     color: white;
     font-family: var(--font-body);
     font-size: 1rem;
+    resize: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.edit-textarea:focus {
+    border-color: var(--color-pink);
     outline: none;
 }
 
-.cp-input:focus {
-    border-bottom-color: var(--color-yellow);
-}
-
-.cp-divider {
-    text-align: center;
-    font-family: var(--font-heading);
-    color: #666;
-    font-size: 0.8rem;
-    margin: 5px 0;
-}
-
-.cp-file-upload {
-    display: block;
-    text-align: center;
-    border: 1px dashed #555;
-    padding: 20px;
-    font-family: var(--font-heading);
-    color: #aaa;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.cp-file-upload:hover {
-    border-color: var(--color-purple);
-    color: var(--color-purple);
-}
-
-.cp-textarea.caption {
-    height: 80px;
-    margin-bottom: 0;
-}
-
-.modal-actions {
+.edit-actions {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
+    margin-top: 8px;
 }
 
 .modal-btn {
@@ -416,7 +395,8 @@
     font-weight: 700;
     cursor: pointer;
     border: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
 }
 
 .modal-btn.cancel {
@@ -428,26 +408,32 @@
     color: white;
 }
 
-.modal-btn.post {
+.modal-btn.save {
     background-color: var(--color-purple);
     color: white;
     border: 2px solid var(--color-purple);
+    transition: all 0.2s;
 }
 
-.modal-btn.post:hover {
+.modal-btn.save:hover {
     background-color: var(--color-pink);
     border-color: var(--color-pink);
     color: black;
 }
 
+.modal-btn.save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
-    .image-post-container {
+    .image-row {
         flex-direction: column;
     }
 
-    .create-post-fab {
-        bottom: 20px;
-        right: 20px;
+    .post-img-side {
+        max-width: 100%;
+        flex: 1;
     }
 }
