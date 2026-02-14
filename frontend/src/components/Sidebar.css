@@ -193,3 +193,39 @@
 .sidebar:hover .user-name {
     opacity: 1;
 }
+
+.logout-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(255, 68, 68, 0.08);
+    border: 1px solid rgba(255, 68, 68, 0.15);
+    color: rgba(255, 68, 68, 0.7);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 68, 68, 0.15);
+    color: #ff4444;
+    border-color: rgba(255, 68, 68, 0.3);
+}
+
+.logout-btn::after {
+    content: 'LOGOUT';
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar:hover .logout-btn::after {
+    opacity: 1;
+}

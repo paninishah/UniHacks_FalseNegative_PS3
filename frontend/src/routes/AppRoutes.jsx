@@ -17,6 +17,7 @@ import ProtectedRoute from './ProtectedRoute';
 import GameLobby from '../features/games/GameLobby';
 import MostLikelyTo from '../features/games/MostLikelyTo';
 import Skribbl from '../features/games/Skribbl';
+import Cupid from '../features/games/Cupid';
 import RecapPage from '../features/recap/RecapPage';
 
 const AppRoutes = () => {
@@ -45,6 +46,7 @@ const AppRoutes = () => {
                     <Route path="/games" element={<GameLobby />} />
                     <Route path="/games/most_likely_to/:sessionId" element={<MostLikelyTo />} />
                     <Route path="/games/skribbl/:sessionId" element={<Skribbl />} />
+                    <Route path="/games/cupid/:sessionId" element={<Cupid />} />
                 </Route>
             </Route>
         </Routes>

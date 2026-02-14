@@ -444,6 +444,10 @@ const Groups = () => {
                                     <div className="arcade-icon">✏️</div>
                                     <div className="arcade-info"><h4>Skribbl</h4></div>
                                 </div>
+                                <div className="arcade-card">
+                                    <div className="arcade-icon">💘</div>
+                                    <div className="arcade-info"><h4>Cupid</h4></div>
+                                </div>
                             </div>
                         </div>
                     </>

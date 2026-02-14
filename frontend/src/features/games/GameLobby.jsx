@@ -1,103 +1,99 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Assuming routing
-import io from 'socket.io-client'; // Is there a socket server? Or just polling?
-// Requirements said "No mock data". Backend is Django.
-// Games: Start Most Likely To, Submit vote, Finish game.
-// Endpoints: START, VOTE, FINISH.
+import { useNavigate } from 'react-router-dom';
 import gameAPI from '../../services/gameAPI';
-import './GameLobby.css'; // Assuming CSS exists or I need to create it.
+import './GameLobby.css';
 
 const GameLobby = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [selectedGame, setSelectedGame] = useState('most_likely_to');
-    const [sessionId, setSessionId] = useState('');
+    const [selectedGame, setSelectedGame] = useState(null);
+    const [groupId, setGroupId] = useState('');
 
-    const PROMPTS = [
-        "Who is most likely to become a billionaire?",
-        "Who is most likely to get arrested?",
-        "Who is most likely to join a cult?",
-        "Who is most likely to cry in public?",
-        "Who is most likely to win a Nobel Prize?",
-        "Who is most likely to forget their own birthday?"
+    const games = [
+        {
+            id: 'most_likely_to',
+            title: 'Most Likely To',
+            description: 'Vote on who in your group is most likely to... Expose your friends with hilarious prompts!',
+            icon: '🎯',
+        },
+        {
+            id: 'skribbl',
+            title: 'Skribbl',
+            description: 'Draw and guess! One person draws, everyone else guesses the secret word.',
+            icon: '🎨',
+        },
+        {
+            id: 'cupid',
+            title: 'Cupid',
+            description: 'Anonymous matchmaking game. Nominate pairs you think would be great together!',
+            icon: '💘',
+        }
     ];
 
-    const handleStartGame = async () => {
+    const handleStartGame = async (gameType) => {
+        if (!groupId) {
+            alert('Enter a Group ID to start a game!');
+            return;
+        }
         setLoading(true);
         try {
-            // Need a session ID or group ID?
-            // "Start Most Likely To" -> usually within a group.
-            // But endpoints.js said `START: (id) => ...`
-            // Is ID the group ID?
-            // Let's assume we are in a group context or we create a new global session?
-            // "Create group ... Group isolation must be enforced"
-            // "Games ... Start Most Likely To"
-            // Probably triggered from Group Dashboard.
-            // But this is GameLobby.
-            // Let's assume passed via props or context if integrated.
-            // Or this creates a standalone game session?
-            // For now, let's implement a generic starter.
+            const payload = { game_type: gameType };
 
-            // Temporary: We need a valid ID for the endpoint.
-            // If the user selects a group, we use that.
-            // Let's just use a placeholder ID '1' for demo if no props.
-            // Realistically, this component should be embedded in GroupDetails or take groupId as prop.
+            if (gameType === 'skribbl') {
+                const words = ['Bicycle', 'Pizza', 'Sunset', 'Robot', 'Penguin', 'Guitar', 'Volcano', 'Astronaut'];
+                payload.secret_word = words[Math.floor(Math.random() * words.length)];
+            }
 
-            // user prompt: "Start Most Likely To... Submit vote... Finish game"
-            // I'll assume we can start a game for a specific group.
-            // How to select group?
-            // Let's just make it simple: "Start New Game" button that calls API.
-
-            const randomPrompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
-            const secretWord = "Bicycle"; // Simple word for Skribbl demo
-
-            const payload = {
-                game_type: selectedGame,
-                prompt_text: selectedGame === 'most_likely_to' ? randomPrompt : null,
-                secret_word: selectedGame === 'skribbl' ? secretWord : null
-            };
-
-            const response = await gameAPI.startGame(sessionId || '1', payload); // sessionId here is groupId
-            // Navigate to game board
-            navigate(`/games/${selectedGame}/${response.game_id}`);
+            const response = await gameAPI.startGame(groupId, payload);
+            navigate(`/games/${gameType}/${response.game_id}`);
         } catch (error) {
-            console.error("Failed to start game", error);
+            console.error("Failed to start game:", error);
+            alert("Could not start game. Make sure the Group ID is valid.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="game-lobby">
-            <h1>ARCADE</h1>
-            <div className="game-selection">
-                <div
-                    className={`game-card ${selectedGame === 'most_likely_to' ? 'selected' : ''}`}
-                    onClick={() => setSelectedGame('most_likely_to')}
-                >
-                    <h3>Most Likely To</h3>
-                    <p>Expose your friends.</p>
-                </div>
-                <div
-                    className={`game-card ${selectedGame === 'skribbl' ? 'selected' : ''}`}
-                    onClick={() => setSelectedGame('skribbl')}
-                >
-                    <h3>Skribbl</h3>
-                    <p>Draw and guess.</p>
-                </div>
+        <div className="lobby-container">
+            <div className="lobby-header">
+                <h1>ARCADE</h1>
+                <p style={{ color: '#888', marginTop: '-10px' }}>Pick a game, enter your group ID, and let the chaos begin.</p>
             </div>
 
-            <div className="lobby-controls">
+            <div className="lobby-group-input">
                 <input
                     type="text"
-                    placeholder="Enter Group ID (Demo)"
-                    value={sessionId}
-                    onChange={(e) => setSessionId(e.target.value)}
+                    placeholder="Enter Group ID"
+                    value={groupId}
+                    onChange={(e) => setGroupId(e.target.value)}
                     className="lobby-input"
                 />
-                <button className="start-btn" onClick={handleStartGame} disabled={loading}>
-                    {loading ? 'STARTING...' : 'START GAME'}
-                </button>
+            </div>
+
+            <div className="games-grid">
+                {games.map(game => (
+                    <div
+                        key={game.id}
+                        className={`game-card ${selectedGame === game.id ? 'selected' : ''}`}
+                        onClick={() => setSelectedGame(game.id)}
+                    >
+                        <div className="game-image">
+                            <span className="game-card-icon">{game.icon}</span>
+                        </div>
+                        <div className="game-info">
+                            <h3>{game.title}</h3>
+                            <p>{game.description}</p>
+                            <button
+                                className="play-btn"
+                                onClick={(e) => { e.stopPropagation(); handleStartGame(game.id); }}
+                                disabled={loading || !groupId}
+                            >
+                                {loading ? 'STARTING...' : 'PLAY'}
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

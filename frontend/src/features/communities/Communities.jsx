@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Communities.css';
 import api from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
 import gamesIcon from '../../assets/icons/navbar/games.svg';
-import groupsIcon from '../../assets/icons/navbar/groups.svg'; // Using groups icon for chat 
+import groupsIcon from '../../assets/icons/navbar/groups.svg';
 
 const Communities = () => {
+    const navigate = useNavigate();
     const [selectedCommunity, setSelectedCommunity] = useState(null);
     const [communities, setCommunities] = useState([]);
     const [posts, setPosts] = useState([]);
@@ -293,8 +295,25 @@ const Communities = () => {
                         <button onClick={() => setGamesOpen(false)}>×</button>
                     </div>
                     <div className="games-list">
-                        <div className="game-item">Community Trivia</div>
-                        <div className="game-item">Leaderboard</div>
+                        {[{ label: 'Most Likely To', type: 'most_likely_to', icon: '🎯' }, { label: 'Skribbl', type: 'skribbl', icon: '🎨' }, { label: 'Cupid', type: 'cupid', icon: '💘' }].map(g => (
+                            <div key={g.type} className="game-item" onClick={async () => {
+                                if (!selectedCommunity) { alert('Select a community first'); return; }
+                                try {
+                                    const payload = { game_type: g.type };
+                                    if (g.type === 'skribbl') {
+                                        const words = ['Bicycle', 'Pizza', 'Sunset', 'Robot', 'Penguin', 'Guitar'];
+                                        payload.secret_word = words[Math.floor(Math.random() * words.length)];
+                                    }
+                                    const res = await api.post(ENDPOINTS.GAMES.START(selectedCommunity.id), payload);
+                                    navigate(`/games/${g.type}/${res.data.game_id}`);
+                                } catch (e) {
+                                    console.error('Failed to start game:', e);
+                                    alert('Could not start game. Try again.');
+                                }
+                            }}>
+                                <span style={{ marginRight: '8px' }}>{g.icon}</span>{g.label}
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}

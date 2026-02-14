@@ -1,89 +1,240 @@
 .skribbl-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, #0a1628 0%, #0a0a0a 100%);
+}
+
+.game-title {
+    text-align: center;
+    font-size: 2.5rem;
+    background: linear-gradient(to right, #00ff88, #00cbff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 20px 0 5px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.skribbl-word-hint {
+    text-align: center;
+    padding: 8px 20px;
+    margin-bottom: 10px;
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.15);
+    border-radius: 8px;
+    color: #00ff88;
+    font-size: 0.9rem;
+}
+
+.skribbl-winner-banner {
+    text-align: center;
+    padding: 14px 30px;
+    margin: 10px auto 15px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 255, 136, 0.1));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #FFD700;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .game-layout {
     display: flex;
     flex: 1;
-    gap: 20px;
-    padding: 20px;
+    gap: 16px;
+    padding: 10px 20px 20px;
     overflow: hidden;
 }
 
 .canvas-wrapper {
     flex: 3;
-    background: #222;
+    background: #111;
     border-radius: 12px;
-    border: 2px solid #444;
+    border: 2px solid #333;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: crosshair;
+    min-height: 400px;
 }
 
 .drawing-board {
-    background: #000;
+    background: #111;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     max-width: 100%;
     max-height: 100%;
+    border-radius: 8px;
 }
 
 .game-sidebar {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #111;
+    background: rgba(17, 17, 17, 0.9);
     border-radius: 12px;
     border: 1px solid #333;
     overflow: hidden;
+    min-width: 260px;
 }
 
-.chat-area {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
+/* Drawing Tools */
+.skribbl-tools {
+    padding: 12px;
+    border-bottom: 1px solid #333;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.color-picker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.color-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.color-btn:hover {
+    transform: scale(1.2);
+}
+
+.color-btn.active {
+    border-color: #00ff88;
+    transform: scale(1.15);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+.size-picker {
+    display: flex;
+    align-items: center;
     gap: 8px;
 }
 
+.size-picker input[type="range"] {
+    flex: 1;
+    accent-color: #00ff88;
+    height: 4px;
+}
+
+.clear-btn {
+    padding: 6px 14px;
+    background: rgba(255, 68, 68, 0.15);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff4444;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.clear-btn:hover {
+    background: rgba(255, 68, 68, 0.25);
+}
+
+/* Chat */
+.chat-area {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .game-msg {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #ccc;
-    padding: 5px 10px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .game-msg.guess {
     border-left: 3px solid #00ff88;
-    background: rgba(0, 255, 136, 0.1);
+    background: rgba(0, 255, 136, 0.06);
+}
+
+.game-msg.system {
+    border-left: 3px solid #FFD700;
+    background: rgba(255, 215, 0, 0.06);
+    color: #FFD700;
+    font-style: italic;
 }
 
 .guess-controls {
-    padding: 15px;
+    padding: 12px;
     border-top: 1px solid #333;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .guess-controls input {
     flex: 1;
-    background: #222;
+    background: #1a1a1a;
     border: 1px solid #444;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
     color: white;
+    font-size: 0.9rem;
+}
+
+.guess-controls input:focus {
+    outline: none;
+    border-color: #00ff88;
+}
+
+.guess-controls input:disabled {
+    opacity: 0.5;
 }
 
 .guess-controls button {
     background: #00ff88;
     color: black;
     border: none;
-    padding: 0 20px;
-    border-radius: 6px;
-    font-weight: bold;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.guess-controls button:hover {
+    background: #00e67a;
+}
+
+.guess-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-size: 1.2rem;
+    color: #888;
 }

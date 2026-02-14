@@ -1,0 +1,279 @@
+.cupid-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at top, #2d1050 0%, #120820 50%, #0a0a0a 100%);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+.cupid-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.cupid-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 10px;
+    animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.cupid-header h1 {
+    font-size: 3rem;
+    background: linear-gradient(to right, #ff6b8a, #ff3d6e, #ff1493);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.cupid-subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 8px;
+    font-size: 0.95rem;
+}
+
+.cupid-instruction {
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+}
+
+.cupid-selection {
+    margin-bottom: 25px;
+}
+
+.cupid-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 30px;
+    background: rgba(255, 20, 147, 0.1);
+    border: 1px solid rgba(255, 20, 147, 0.3);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cupid-heart {
+    font-size: 1.5rem;
+    animation: heartBeat 1s ease-in-out infinite;
+}
+
+.cupid-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 30px;
+}
+
+.cupid-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.cupid-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+}
+
+.cupid-card.selected-a {
+    border-color: #ff6b8a;
+    background: rgba(255, 107, 138, 0.12);
+    box-shadow: 0 0 20px rgba(255, 107, 138, 0.2);
+}
+
+.cupid-card.selected-b {
+    border-color: #ff1493;
+    background: rgba(255, 20, 147, 0.12);
+    box-shadow: 0 0 20px rgba(255, 20, 147, 0.2);
+}
+
+.cupid-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.cupid-card span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.selection-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff6b8a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.selection-badge.badge-b {
+    background: #ff1493;
+}
+
+.cupid-submit-btn {
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b8a, #ff1493);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cupid-submit-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(255, 20, 147, 0.3);
+}
+
+.cupid-submitted {
+    text-align: center;
+    padding: 40px;
+}
+
+.cupid-submitted h3 {
+    font-size: 1.5rem;
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+
+.cupid-submitted p {
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 20px;
+}
+
+.cupid-finish-btn {
+    padding: 14px 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b8a, #ff1493);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cupid-finish-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Result Card */
+.cupid-result-card {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+.cupid-match-reveal {
+    background: rgba(255, 20, 147, 0.08);
+    border: 1px solid rgba(255, 20, 147, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.match-emoji {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.cupid-match-reveal h2 {
+    font-size: 1.5rem;
+    color: #ff6b8a;
+    margin-bottom: 30px;
+    letter-spacing: 3px;
+}
+
+.match-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.match-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.match-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.match-person span {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.match-heart {
+    font-size: 2rem;
+    animation: heartBeat 1s ease-in-out infinite;
+}

@@ -6,6 +6,7 @@ class GameSession(models.Model):
     GAME_TYPES = [
         ("most_likely_to", "Most Likely To"),
         ("skribbl", "Skribbl"),
+        ("cupid", "Cupid"),
     ]
 
     STATUS = [

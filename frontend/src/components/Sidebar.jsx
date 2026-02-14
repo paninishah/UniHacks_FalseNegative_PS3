@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import fullLogo from '../assets/icons/converse_full.svg';
 import starIcon from '../assets/icons/landing_star.svg';
 import newsIcon from '../assets/icons/navbar/news.svg';
@@ -9,12 +9,20 @@ import notifsIcon from '../assets/icons/navbar/notifs.svg';
 import './Sidebar.css';
 
 const Sidebar = () => {
+    const navigate = useNavigate();
+
     const navItems = [
         { path: '/feed', label: 'NEWSROOM', icon: newsIcon },
         { path: '/groups', label: 'NEWS BITES', icon: groupsIcon },
         { path: '/communities', label: 'COMMUNITIES', icon: commsIcon },
         { path: '/notifications', label: 'NOTIFICATIONS', icon: notifsIcon },
     ];
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh');
+        navigate('/login');
+    };
 
     return (
         <div className="sidebar">
@@ -41,6 +49,9 @@ const Sidebar = () => {
                     <div className="pfp-placeholder"></div>
                     <span className="user-name">User</span>
                 </NavLink>
+                <button className="logout-btn" onClick={handleLogout} title="Logout">
+                    ⏻
+                </button>
             </div>
         </div>
     );

@@ -1,40 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import gameAPI from '../../services/gameAPI';
-import groupAPI from '../../services/groupAPI';
-import './MostLikelyTo.css'; // Assume css
+import client from '../../api/client';
+import { ENDPOINTS } from '../../api/endpoints';
+import './MostLikelyTo.css';
 
 const MostLikelyTo = () => {
-    const { sessionId, groupId } = useParams(); // Helper note: sessionId here is actually gameId based on routes
+    const { sessionId } = useParams();
     const navigate = useNavigate();
     const [game, setGame] = useState(null);
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [votedUser, setVotedUser] = useState(null);
     const [results, setResults] = useState(null);
+    const [voteCount, setVoteCount] = useState(0);
 
-    // WebSocket Ref
     const wsRef = useRef(null);
 
     useEffect(() => {
         const init = async () => {
             setLoading(true);
             try {
-                // Fetch game details
                 const gameData = await gameAPI.getGame(sessionId);
                 setGame(gameData);
 
-                // Fetch members
                 if (gameData.group_id) {
-                    const membersData = await groupAPI.getMembers(gameData.group_id);
-                    // API returns membership objects with nested user
+                    const res = await client.get(ENDPOINTS.GROUPS.MEMBERS(gameData.group_id));
+                    const membersData = Array.isArray(res.data) ? res.data : (res.data.results || []);
                     setMembers(membersData.map(m => m.user || m));
                 }
 
-                // Connect WebSocket
                 connectGameWebSocket(sessionId);
             } catch (error) {
-                console.error("Init failed", error);
+                console.error("Init failed:", error);
             } finally {
                 setLoading(false);
             }
@@ -50,89 +48,109 @@ const MostLikelyTo = () => {
         const token = localStorage.getItem('token');
         const wsUrl = `ws://localhost:8000/ws/game/${id}/?token=${token}`;
         wsRef.current = new WebSocket(wsUrl);
-
         wsRef.current.onopen = () => console.log("Game WS Connected");
-
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.action === "vote") {
-                // Someone voted
-                // For now, maybe just show a toast or refresh leaderboard?
-                // Or simplified: just re-fetch leaderboard if we assume backend aggregates
-                // But for real-time feeling, let's just log it or show a notification
-                console.log(`${data.user} voted!`);
-                // Ideally update a "Votes: X/Y" counter
+                setVoteCount(prev => prev + 1);
             }
         };
+        wsRef.current.onerror = (e) => console.error("WS Error:", e);
     };
 
-    const handleVote = async (targetUserId) => {
+    const handleVote = async (member) => {
         try {
-            const member = members.find(m => m.id === targetUserId);
-            if (!member || !wsRef.current) return;
-
-            // Send vote via WS for real-time feel + API for persistence if needed
-            // Actually, best to use API for persistence and WS for notification
-            // But let's stick to API for action, WS for notification from backend
             await gameAPI.vote(sessionId, { voted_username: member.username });
 
-            // Backend consumer should see the DB update? 
-            // Actually, our consumer handles "vote" action from WS, BUT we usually call API.
-            // Let's call API as before, but ALSO send WS message if we want immediate feedback?
-            // Wait, the consumer `receive` method handles `vote` action and saves to DB. 
-            // So we can just use WS to vote! 
-            // But `gameAPI.vote` uses HTTP. Let's stick to HTTP for reliability, 
-            // and the backend consumer should likely hook into DB signals or we just use WS for everything?
-            // The instructions said "The ai needs to give it randomzied questions... everyone needs to have an option to vote".
-            // Let's use the WS for voting to match the Skribbl pattern if possible.
-            // BUT, I implemented `save_vote` in consumer. So I can use WS.
+            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({
+                    action: "vote",
+                    vote_for: member.username
+                }));
+            }
 
-            wsRef.current.send(JSON.stringify({
-                action: "vote",
-                vote_for: member.username
-            }));
+            setVotedUser(member.username);
 
-            setVotedUser(targetUserId);
-
-            // Fetch leaderboard/results
-            // Give it a moment or wait for "game_finished" event
+            // Fetch leaderboard after voting
             const leaderboard = await gameAPI.getLeaderboard(sessionId);
-            setResults(leaderboard);
+            setResults(leaderboard); // This is an array of { username, score }
         } catch (error) {
-            console.error("Vote failed", error);
+            console.error("Vote failed:", error);
         }
     };
 
-    if (loading) return <div>Loading Game...</div>;
-    if (!game) return <div>Game Not Found</div>;
+    const handleFinish = async () => {
+        try {
+            const result = await client.post(ENDPOINTS.GAMES.FINISH_MOST_LIKELY(sessionId));
+            if (result.data.winner) {
+                alert(`🏆 Winner: ${result.data.winner}!`);
+                const leaderboard = await gameAPI.getLeaderboard(sessionId);
+                setResults(leaderboard);
+            }
+        } catch (error) {
+            console.error("Finish failed:", error);
+        }
+    };
+
+    if (loading) return <div className="game-container"><div className="loading-spinner">Loading Game...</div></div>;
+    if (!game) return <div className="game-container"><h2>Game Not Found</h2></div>;
 
     return (
         <div className="game-container">
             <h1 className="game-title">MOST LIKELY TO...</h1>
-            <div className="game-prompt-card">
+            <div className="prompt-card">
                 <h2>{game.prompt_text || "Be the main character?"}</h2>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
+                    {voteCount} vote(s) submitted
+                </p>
             </div>
 
             {!votedUser ? (
-                <div className="members-grid">
+                <div className="players-grid">
                     {members.map(member => (
-                        <div key={member.id} className="member-card" onClick={() => handleVote(member.id)}>
-                            <div className="member-pfp" style={{ backgroundImage: `url(${member.profile_picture || ''})` }}></div>
-                            <span>{member.name || member.username}</span>
+                        <div
+                            key={member.id}
+                            className="player-card"
+                            onClick={() => handleVote(member)}
+                        >
+                            <div className="avatar" style={{
+                                background: `hsl(${(member.id * 67) % 360}, 60%, 50%)`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '2rem', color: 'white'
+                            }}>
+                                {(member.name || member.username || '?').charAt(0).toUpperCase()}
+                            </div>
+                            <span className="player-name">{member.name || member.username}</span>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="results-view">
-                    <h3>VOTE SUBMITTED!</h3>
-                    <div className="leaderboard">
-                        {results && Object.entries(results).map(([user, score]) => (
-                            <div key={user} className="leaderboard-item">
-                                <span>{user}</span>
-                                <span>{score} votes</span>
-                            </div>
-                        ))}
-                    </div>
+                <div className="results-view" style={{ width: '100%', maxWidth: '500px' }}>
+                    <h3 style={{ color: '#00ff88', marginBottom: '20px' }}>✅ You voted for {votedUser}!</h3>
+
+                    <button className="next-button" onClick={handleFinish} style={{ marginBottom: '20px' }}>
+                        FINISH GAME & REVEAL WINNER
+                    </button>
+
+                    {results && results.length > 0 && (
+                        <div className="leaderboard" style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            borderRadius: '12px', padding: '20px',
+                            border: '1px solid rgba(255,255,255,0.1)'
+                        }}>
+                            <h4 style={{ marginBottom: '15px', color: '#FFD700' }}>🏆 Leaderboard</h4>
+                            {results.map((entry, i) => (
+                                <div key={entry.username} style={{
+                                    display: 'flex', justifyContent: 'space-between',
+                                    padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                    color: i === 0 ? '#00ff88' : '#ccc'
+                                }}>
+                                    <span>{i + 1}. {entry.username}</span>
+                                    <span>{entry.score} pts</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>
