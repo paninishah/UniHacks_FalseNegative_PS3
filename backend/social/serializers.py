@@ -1,15 +1,24 @@
 from rest_framework import serializers
 from .models import Post, Reaction, Comment, SavedPost, User
-from converse.ai_services import generate_dramatic_headline
+
 
 from users.serializers import UserSummarySerializer
 
+
+from groups.models import Group
 
 class PostSerializer(serializers.ModelSerializer):
     user = UserSummarySerializer(read_only=True)
     reactions = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
     headline_generated = serializers.CharField(read_only=True)
+    
+    # Explicitly include group as a primary key field for writing
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), 
+        required=False, 
+        allow_null=True
+    )
 
     class Meta:
         model = Post
@@ -28,25 +37,8 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
     def create(self, validated_data):
-        # Extract group from context if available or request data
-        group_id = self.context['request'].data.get('group')
-        if group_id:
-            from groups.models import Group
-            validated_data['group'] = Group.objects.get(id=group_id)
-
-        text = validated_data.get("text_content")
-
-        # Dramatically Generate Headline via Gemini
-        if text:
-            try:
-                headline = generate_dramatic_headline(text)
-                validated_data["headline_generated"] = headline
-            except Exception as e:
-                # Fallback purely for safety
-                validated_data["headline_generated"] = f"Breaking: {text[:20]}..."
-
+        # Assign user from context
         validated_data["user"] = self.context["request"].user
-
         return super().create(validated_data)
 
 

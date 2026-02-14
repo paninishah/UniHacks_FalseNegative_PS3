@@ -23,7 +23,9 @@ class FeedView(generics.ListAPIView):
         user = self.request.user
 
         return Post.objects.filter(
-            is_deleted=False
+            is_deleted=False,
+            group__isnull=True, # Exclude group posts from main feed
+            visibility='public'  # Only public posts
         ).order_by("-created_at")
 
 
@@ -67,4 +69,10 @@ class GroupPostsView(generics.ListAPIView):
 
     def get_queryset(self):
         group_id = self.kwargs["group_id"]
+        # Enforce membership check
+        user = self.request.user
+        from groups.models import GroupMembership
+        if not GroupMembership.objects.filter(group_id=group_id, user=user).exists():
+            return Post.objects.none() # Or raise PermissionDenied
+        
         return Post.objects.filter(group__id=group_id, is_deleted=False).order_by("-created_at")

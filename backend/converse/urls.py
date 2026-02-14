@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/games/', include('games.urls')),
     path('api/chatbot/', include('chatbot.urls')),
     path("api/groups/", include("groups.urls")),
+    path("api/communities/", include("communities.urls")),
 
     path("api/users/", include("users.urls")),
     path("api/social/", include("social.urls")),

@@ -67,6 +67,17 @@ class CommunityMember(models.Model):
 
 class CommunityPost(models.Model):
 
+    POST_TYPES = [
+        ("meme", "Meme"),
+        ("roast", "Roast"),
+        ("confession", "Confession"),
+        ("joke", "Joke"),
+        ("inside_joke", "Inside Joke"),
+        ("casual", "Casual"),
+        ("news_bite", "News Bite"),
+        ("image", "Image"),
+    ]
+
     community = models.ForeignKey(
         Community,
         on_delete=models.CASCADE,
@@ -75,11 +86,13 @@ class CommunityPost(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True) # made blank=True as some types might not need it
 
     content = models.TextField(blank=True)
 
     image = models.ImageField(upload_to="community_posts/", null=True, blank=True)
+
+    post_type = models.CharField(max_length=20, choices=POST_TYPES, default="casual")
 
     created_at = models.DateTimeField(auto_now_add=True)
 

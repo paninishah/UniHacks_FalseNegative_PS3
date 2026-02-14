@@ -1,15 +1,18 @@
 from django.urls import path
-from .views import *
+from .views import (
+    CommunityListCreateView,
+    CommunityDetailView,
+    CommunityJoinView,
+    CommunityLeaveView,
+    CommunityPostListCreateView,
+    CommunityPostDetailView
+)
 
 urlpatterns = [
-
-    path("create/", CreateCommunityView.as_view()),
-    path("join/", JoinCommunityView.as_view()),
-
-    path("list/", CommunityListView.as_view()),
-
-    path("post/", CreatePostView.as_view()),
-    path("feed/<int:community_id>/", CommunityFeedView.as_view()),
-
-    path("comment/", CommentView.as_view()),
+    path('', CommunityListCreateView.as_view()),
+    path('<int:id>/', CommunityDetailView.as_view()),
+    path('<int:community_id>/join/', CommunityJoinView.as_view()),
+    path('<int:community_id>/leave/', CommunityLeaveView.as_view()),
+    path('<int:community_id>/posts/', CommunityPostListCreateView.as_view()),
+    path('posts/<int:id>/', CommunityPostDetailView.as_view()),
 ]

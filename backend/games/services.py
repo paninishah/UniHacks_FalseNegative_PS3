@@ -74,7 +74,7 @@ def start_game(group, game_type, prompt_text=None, secret_word=None):
     )
 
     # Auto-create participants
-    members = group.groupmember_set.all()
+    members = group.memberships.all()
 
     for member in members:
         GameParticipant.objects.create(

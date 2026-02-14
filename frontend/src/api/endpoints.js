@@ -19,12 +19,16 @@ export const ENDPOINTS = {
     },
     GROUPS: {
         LIST: '/api/groups/',
-        MINE: '/api/groups/mine/',
+        MY: '/api/groups/my/',
+        CREATE: '/api/groups/',
         DETAILS: (id) => `/api/groups/${id}/`,
         JOIN: (id) => `/api/groups/${id}/join/`,
         LEAVE: (id) => `/api/groups/${id}/leave/`,
         MEMBERS: (id) => `/api/groups/${id}/members/`,
         MESSAGES: (id) => `/api/groups/${id}/messages/`,
+        INTERVENTIONS: (groupId) => `/api/groups/${groupId}/interventions/`,
+        INTERVENTION_DETAILS: (id) => `/api/groups/interventions/${id}/`,
+        INTERVENTION_MESSAGES: (id) => `/api/groups/interventions/${id}/messages/`,
     },
     GAMES: {
         START: (id) => `/api/games/start/${id}/`,
@@ -59,11 +63,13 @@ export const ENDPOINTS = {
         CHAT: '/api/chatbot/chat/',
     },
     COMMUNITIES: {
-        list: '/api/communities/list/',
-        create: '/api/communities/create/',
-        join: '/api/communities/join/',
-        post: '/api/communities/post/',
-        feed: (id) => `/api/communities/feed/${id}/`,
+        LIST: '/api/communities/',
+        CREATE: '/api/communities/',
+        DETAILS: (id) => `/api/communities/${id}/`,
+        JOIN: (id) => `/api/communities/${id}/join/`,
+        LEAVE: (id) => `/api/communities/${id}/leave/`,
+        POSTS: (id) => `/api/communities/${id}/posts/`,
+        POST_DETAILS: (id) => `/api/communities/posts/${id}/`,
     },
     ENGAGEMENT: {
         // checks etc

@@ -1,106 +1,226 @@
-.communities-container {
+.communities-layout {
+    display: flex;
+    height: 100vh;
+    padding-top: 20px;
+    /* Accounts for navbar */
+    overflow: hidden;
+    color: var(--text-color, white);
+    /* Fallback to white */
+    background: #000;
+    /* Ensure background is black */
+}
+
+.select-community-prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #888;
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+}
+
+/* SIDEBAR */
+.communities-sidebar {
+    width: 280px;
+    background-color: #1a1a1a;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-header h2 {
+    font-size: 1.2rem;
+    color: var(--color-pink);
+    margin: 0;
+}
+
+.create-community-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    /* Center the plus */
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.create-community-btn:hover {
+    border-color: var(--color-pink);
+    color: var(--color-pink);
+}
+
+.community-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}
+
+.community-item {
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+}
+
+.community-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.community-item.active {
+    background-color: var(--color-pink);
+    color: white;
+    font-weight: bold;
+}
+
+.community-icon {
+    font-family: monospace;
+    color: #888;
+}
+
+.community-item.active .community-icon {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* MAIN CONTENT */
+.communities-main {
+    flex: 1;
+    overflow-y: auto;
     padding: 20px;
     padding-bottom: 100px;
-    max-width: 1000px;
-    margin: 0 auto;
-    color: var(--text-color);
 }
 
-/* HEADER DROPDOWN */
-.communities-header-bar {
+.community-header-banner {
+    background-color: #222;
+    background-size: cover;
+    background-position: center;
+    padding: 40px;
+    border-radius: 12px;
     margin-bottom: 30px;
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-end;
+    border: 1px solid #333;
+    position: relative;
+    overflow: hidden;
 }
 
-.community-selector {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background-color: var(--bg-color-auth);
-    padding: 10px 20px;
-    border: 1px solid var(--color-pink);
-    /* Pink for communities? Or stick to theme? Let's use Pink for variety */
+.community-header-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    z-index: 1;
 }
 
-.community-selector label {
-    font-family: var(--font-heading);
-    color: var(--color-pink);
-    font-weight: 700;
+.banner-content {
+    position: relative;
+    z-index: 2;
 }
 
-.community-dropdown {
-    background: transparent;
-    border: none;
+.banner-content h1 {
+    font-size: 3rem;
+    margin: 0;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.banner-content p {
+    color: #ccc;
+    margin-top: 5px;
+}
+
+.create-post-btn-header {
+    background: var(--color-pink);
     color: white;
-    font-family: var(--font-heading);
-    font-size: 1.2rem;
-    font-weight: 700;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
     cursor: pointer;
-    outline: none;
+    border-radius: 20px;
+    transition: transform 0.2s;
 }
 
-.community-dropdown option {
-    background-color: black;
+.create-post-btn-header:hover {
+    transform: scale(1.05);
 }
 
-/* FEED GRID */
+.banner-actions {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.join-btn {
+    background: white;
+    color: black;
+    border: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background 0.2s;
+}
+
+.join-btn:hover {
+    background: #ddd;
+}
+
+.leave-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.leave-btn:hover {
+    content: "Leave";
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-pink);
+}
+
+/* On hover change text from "Joined" to "Leave"? Needs JS or clever CSS ::after, keeping simple for now */
+
+.member-count {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* FEED GRID (Existing styles adapted) */
 .communities-feed-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     grid-auto-flow: dense;
 }
 
-.community-post {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid #333;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
-}
-
-.community-post.type-news-bite {
-    background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(0, 0, 0, 0.5));
-    border-color: var(--color-pink);
-}
-
-.span-row-2 {
-    grid-row: span 2;
-}
-
-.span-col-2 {
-    grid-column: span 2;
-}
-
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    font-family: var(--font-heading);
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.post-user {
-    color: var(--color-pink);
-    font-weight: 700;
-}
-
-.post-text {
-    font-size: 1.1rem;
-    line-height: 1.5;
-}
-
-.post-img {
-    width: 100%;
-    height: 150px;
-    background-size: cover;
-    background-position: center;
-    border: 1px solid #444;
-    margin-top: 10px;
-}
 
 /* FABs - Reuse stylings or duplicate? Duplicate to ensure scoping */
 .communities-fabs {
@@ -242,7 +362,107 @@
     transition: background-color 0.2s;
 }
 
-.game-item:hover {
-    background-color: var(--color-purple);
+
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.create-post-modal {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--color-pink);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.create-post-modal h3 {
+    color: var(--color-pink);
+    margin-top: 0;
+}
+
+.create-post-modal input,
+.create-post-modal textarea,
+.create-post-modal select {
+    background: #333;
+    border: 1px solid #444;
     color: white;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-actions button[type="submit"] {
+    background: var(--color-pink);
+    color: white;
+}
+
+.modal-actions button[type="button"] {
+    background: #444;
+    color: white;
+}
+
+.create-post-btn {
+    background: var(--color-pink);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--font-heading);
+}
+
+/* Badges */
+.post-type-badge {
+    align-self: flex-start;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    background: #333;
+    color: #fff;
+    margin-top: 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.type-news_bite .post-type-badge {
+    color: #ff00ff;
+    border: 1px solid #ff00ff;
+}
+
+.type-meme .post-type-badge {
+    color: #ffd700;
+    border: 1px solid #ffd700;
+}
+
+.type-roast .post-type-badge {
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
 }

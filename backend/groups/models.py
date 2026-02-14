@@ -38,3 +38,28 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.content[:20]}"
+
+class Intervention(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('archived', 'Archived'),
+    ]
+
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='interventions')
+    title = models.CharField(max_length=255) # e.g. "Intervention for Rahul"
+    target = models.CharField(max_length=255) # e.g. "Rahul"
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.title} ({self.status})"
+
+class InterventionMessage(models.Model):
+    intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE, related_name='messages')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Msg by {self.user.username} in {self.intervention.title}"

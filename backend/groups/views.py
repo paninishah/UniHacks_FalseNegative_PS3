@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Group, GroupMembership, Message
+from .models import Group, GroupMembership, Message, Intervention, InterventionMessage
 from .serializers import GroupSerializer, GroupMembershipSerializer, MessageSerializer
 
 class GroupListCreateView(generics.ListCreateAPIView):
@@ -86,3 +86,32 @@ class GroupMessageView(generics.ListCreateAPIView):
              # In a real app, raise PermissionDenied or similar
              pass 
         serializer.save(user=self.request.user, group=group)
+
+class InterventionListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    from .serializers import InterventionSerializer # local import to avoid circular defaults
+    serializer_class = InterventionSerializer
+
+    def get_queryset(self):
+        group_id = self.kwargs['group_id']
+        return Intervention.objects.filter(group_id=group_id).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        group = get_object_or_404(Group, id=self.kwargs['group_id'])
+        serializer.save(created_by=self.request.user, group=group)
+
+class InterventionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    from .serializers import InterventionSerializer
+    serializer_class = InterventionSerializer
+    queryset = Intervention.objects.all()
+    lookup_field = 'pk'
+
+class InterventionMessageCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    from .serializers import InterventionMessageSerializer
+    serializer_class = InterventionMessageSerializer
+
+    def perform_create(self, serializer):
+        intervention = get_object_or_404(Intervention, id=self.kwargs['intervention_id'])
+        serializer.save(user=self.request.user, intervention=intervention)

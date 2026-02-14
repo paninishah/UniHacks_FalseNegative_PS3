@@ -1,112 +1,270 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Communities.css';
+import api from '../../api/client';
+import { ENDPOINTS } from '../../api/endpoints';
 import gamesIcon from '../../assets/icons/navbar/games.svg';
 import groupsIcon from '../../assets/icons/navbar/groups.svg'; // Using groups icon for chat 
 
 const Communities = () => {
-    const [selectedCommunity, setSelectedCommunity] = useState('popverse');
+    const [selectedCommunity, setSelectedCommunity] = useState(null);
+    const [communities, setCommunities] = useState([]);
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [isChatOpen, setChatOpen] = useState(false);
     const [isGamesOpen, setGamesOpen] = useState(false);
 
-    const communities = [
-        { id: 'popverse', name: 'PopVerse General' },
-        { id: 'photography', name: 'Photography Club' },
-        { id: 'gaming', name: 'Uni Gamers' },
-        { id: 'confessions', name: 'Public Confessions' }
-    ];
+    // Create Community State
+    const [isCreateCommunityModalOpen, setCreateCommunityModalOpen] = useState(false);
+    const [newCommunityName, setNewCommunityName] = useState('');
+    const [newCommunityDesc, setNewCommunityDesc] = useState('');
 
-    // Dummy posts for communities
-    const posts = [
-        {
-            id: 1,
-            user: { name: 'Admin', username: '@admin' },
-            type: 'news-bite',
-            content: "Welcome to the PopVerse! 🌍 Connect with everyone here.",
-            time: '2h ago',
-            gridClass: 'span-col-2',
-            category: 'popverse'
-        },
-        {
-            id: 2,
-            user: { name: 'Lens Queen', username: '@photo_girl' },
-            type: 'image',
-            caption: "Golden hour on the quad today. 📸",
-            imageUrl: 'https://via.placeholder.com/500',
-            time: '3h ago',
-            gridClass: 'span-row-2',
-            category: 'photography'
-        },
-        {
-            id: 3,
-            user: { name: 'PixelPush', username: '@gamer123' },
-            type: 'meme',
-            caption: "My GPU when I try to render 4k:",
-            imageUrl: 'https://via.placeholder.com/400',
-            time: '30m ago',
-            gridClass: '',
-            category: 'gaming'
-        },
-        {
-            id: 4,
-            user: { name: 'Anon', username: '@anon' },
-            type: 'confession',
-            content: "I actually like the 8am classes. Said no one ever.",
-            time: '5m ago',
-            gridClass: '',
-            category: 'confessions'
-        },
-        {
-            id: 5,
-            user: { name: 'Campus Events', username: '@events' },
-            type: 'casual',
-            content: "Open Mic Night this Friday! 🎤 Don't miss out.",
-            time: '1d ago',
-            gridClass: 'span-col-2',
-            category: 'popverse'
+    // Post creation state
+    const [isPostModalOpen, setPostModalOpen] = useState(false);
+    const [newPostContent, setNewPostContent] = useState('');
+    const [newPostTitle, setNewPostTitle] = useState('');
+    const [newPostType, setNewPostType] = useState('casual');
+
+    useEffect(() => {
+        fetchCommunities();
+    }, []);
+
+    useEffect(() => {
+        if (selectedCommunity) {
+            fetchPosts(selectedCommunity.id);
         }
-    ];
+    }, [selectedCommunity]);
 
-    const filteredPosts = posts.filter(p => p.category === selectedCommunity || p.category === 'popverse');
+    const fetchCommunities = async () => {
+        try {
+            const response = await api.get(ENDPOINTS.COMMUNITIES.LIST);
+            setCommunities(response.data);
+            if (response.data.length > 0 && !selectedCommunity) {
+                setSelectedCommunity(response.data[0]);
+            }
+        } catch (error) {
+            console.error("Error fetching communities:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchPosts = async (communityId) => {
+        try {
+            const response = await api.get(ENDPOINTS.COMMUNITIES.POSTS(communityId));
+            setPosts(response.data);
+        } catch (error) {
+            console.error("Error fetching community posts:", error);
+        }
+    };
+
+    const handleCreateCommunity = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post(ENDPOINTS.COMMUNITIES.CREATE, {
+                name: newCommunityName,
+                description: newCommunityDesc
+            });
+            setCreateCommunityModalOpen(false);
+            setNewCommunityName('');
+            setNewCommunityDesc('');
+            fetchCommunities(); // Refresh list
+        } catch (error) {
+            console.error("Error creating community:", error);
+            alert("Failed to create community. Name might be taken.");
+        }
+    };
+
+    const handleCreatePost = async (e) => {
+        e.preventDefault();
+        if (!newPostContent.trim() || !selectedCommunity) return;
+
+        try {
+            await api.post(ENDPOINTS.COMMUNITIES.POSTS(selectedCommunity.id), {
+                title: newPostTitle,
+                content: newPostContent,
+                post_type: newPostType
+            });
+            setPostModalOpen(false);
+            setNewPostContent('');
+            setNewPostTitle('');
+            fetchPosts(selectedCommunity.id);
+        } catch (error) {
+            console.error("Error creating post:", error);
+        }
+    };
+
+    const handleJoinCommunity = async () => {
+        if (!selectedCommunity) return;
+        try {
+            await api.post(ENDPOINTS.COMMUNITIES.JOIN(selectedCommunity.id));
+            fetchCommunities(); // Refresh to update is_member status
+            // Optimistic update
+            setSelectedCommunity(prev => ({ ...prev, is_member: true, member_count: prev.member_count + 1 }));
+        } catch (error) {
+            console.error("Error joining community:", error);
+            alert("Failed to join community.");
+        }
+    };
+
+    const handleLeaveCommunity = async () => {
+        if (!selectedCommunity) return;
+        if (!window.confirm(`Are you sure you want to leave r/${selectedCommunity.name}?`)) return;
+        try {
+            await api.post(ENDPOINTS.COMMUNITIES.LEAVE(selectedCommunity.id));
+            fetchCommunities(); // Refresh
+            // Optimistic update
+            setSelectedCommunity(prev => ({ ...prev, is_member: false, member_count: prev.member_count - 1 }));
+        } catch (error) {
+            console.error("Error leaving community:", error);
+            alert("Failed to leave community.");
+        }
+    };
+
+    if (loading) return <div className="loading-spinner">Loading communities...</div>;
 
     return (
-        <div className="communities-container">
-            {/* Header with Dropdown */}
-            <div className="communities-header-bar">
-                <div className="community-selector">
-                    <label>COMMUNITY:</label>
-                    <select
-                        value={selectedCommunity}
-                        onChange={(e) => setSelectedCommunity(e.target.value)}
-                        className="community-dropdown"
-                    >
-                        {communities.map(c => (
-                            <option key={c.id} value={c.id}>{c.name.toUpperCase()}</option>
-                        ))}
-                    </select>
+        <div className="communities-layout">
+            {/* LEFT SIDEBAR - REDDIT STYLE */}
+            <div className="communities-sidebar">
+                <div className="sidebar-header">
+                    <h2>COMMUNITIES</h2>
+                    <button className="create-community-btn" onClick={() => setCreateCommunityModalOpen(true)}>
+                        +
+                    </button>
+                </div>
+                <div className="community-list">
+                    {communities.map(c => (
+                        <div
+                            key={c.id}
+                            className={`community-item ${selectedCommunity?.id === c.id ? 'active' : ''}`}
+                            onClick={() => setSelectedCommunity(c)}
+                        >
+                            <span className="community-icon">r/</span>
+                            <span className="community-name">{c.name}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* Bento Feed */}
-            <div className="communities-feed-grid">
-                {filteredPosts.map(post => (
-                    <div key={post.id} className={`community-post type-${post.type || 'casual'} ${post.gridClass || ''}`}>
-                        <div className="post-header">
-                            <span className="post-user">{post.user.name}</span>
-                            <span className="post-time">{post.time}</span>
+            {/* MAIN CONTENT AREA */}
+            <div className="communities-main">
+                {selectedCommunity ? (
+                    <>
+                        <div className="community-header-banner" style={{ backgroundImage: `url(${selectedCommunity.banner || ''})` }}>
+                            <div className="banner-content">
+                                <h1>r/{selectedCommunity.name}</h1>
+                                <p>{selectedCommunity.description}</p>
+                                <p className="member-count">{selectedCommunity.member_count} Members</p>
+                            </div>
+                            <div className="banner-actions">
+                                {selectedCommunity.is_member ? (
+                                    <button className="leave-btn" onClick={handleLeaveCommunity}>Joined</button>
+                                ) : (
+                                    <button className="join-btn" onClick={handleJoinCommunity}>Join</button>
+                                )}
+                                <button className="create-post-btn-header" onClick={() => setPostModalOpen(true)}>
+                                    + POST
+                                </button>
+                            </div>
                         </div>
-                        <div className="post-content">
-                            {post.type === 'meme' || post.type === 'image' ? (
-                                <>
-                                    <p>{post.caption}</p>
-                                    <div className="post-img" style={{ backgroundImage: `url(${post.imageUrl})` }}></div>
-                                </>
+
+                        <div className="communities-feed-grid">
+                            {posts.length === 0 ? (
+                                <div className="no-posts">
+                                    <p>No posts yet in r/{selectedCommunity.name}. Be the first!</p>
+                                </div>
                             ) : (
-                                <p className="post-text">{post.content}</p>
+                                posts.map((post, index) => (
+                                    <div key={post.id} className={`community-post type-${post.post_type || 'casual'} ${index % 5 === 0 ? 'span-col-2' : ''}`}>
+                                        <div className="post-header">
+                                            <span className="post-user">{post.user?.name || post.user?.username}</span>
+                                            <span className="post-time">{new Date(post.created_at).toLocaleString()}</span>
+                                        </div>
+                                        <div className="post-content">
+                                            {post.title && <h3 className="post-title">{post.title}</h3>}
+                                            {post.image ? (
+                                                <>
+                                                    <p>{post.content}</p>
+                                                    <div className="post-img" style={{ backgroundImage: `url(${post.image})` }}></div>
+                                                </>
+                                            ) : (
+                                                <p className="post-text">{post.content}</p>
+                                            )}
+                                        </div>
+                                        <div className="post-type-badge">{post.post_type}</div>
+                                    </div>
+                                ))
                             )}
                         </div>
+                    </>
+                ) : (
+                    <div className="select-community-prompt">
+                        <p>Select a community to view posts</p>
                     </div>
-                ))}
+                )}
             </div>
+
+            {/* Create Post Modal */}
+            {isPostModalOpen && (
+                <div className="modal-overlay">
+                    <div className="create-post-modal">
+                        <h3>Post to r/{selectedCommunity?.name}</h3>
+                        <form onSubmit={handleCreatePost}>
+                            <input
+                                type="text"
+                                placeholder="Title (optional)"
+                                value={newPostTitle}
+                                onChange={(e) => setNewPostTitle(e.target.value)}
+                            />
+                            <textarea
+                                placeholder="What's strictly confidental? (jk)"
+                                value={newPostContent}
+                                onChange={(e) => setNewPostContent(e.target.value)}
+                                rows="4"
+                            />
+                            <select value={newPostType} onChange={(e) => setNewPostType(e.target.value)}>
+                                <option value="casual">Casual</option>
+                                <option value="meme">Meme</option>
+                                <option value="roast">Roast</option>
+                                <option value="confession">Confession</option>
+                                <option value="news_bite">News Bite</option>
+                            </select>
+                            <div className="modal-actions">
+                                <button type="button" onClick={() => setPostModalOpen(false)}>Cancel</button>
+                                <button type="submit">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Community Modal */}
+            {isCreateCommunityModalOpen && (
+                <div className="modal-overlay">
+                    <div className="create-post-modal">
+                        <h3>Create a Community</h3>
+                        <form onSubmit={handleCreateCommunity}>
+                            <input
+                                type="text"
+                                placeholder="Community Name (e.g. Gamers)"
+                                value={newCommunityName}
+                                onChange={(e) => setNewCommunityName(e.target.value)}
+                                required
+                            />
+                            <textarea
+                                placeholder="Description"
+                                value={newCommunityDesc}
+                                onChange={(e) => setNewCommunityDesc(e.target.value)}
+                                rows="3"
+                            />
+                            <div className="modal-actions">
+                                <button type="button" onClick={() => setCreateCommunityModalOpen(false)}>Cancel</button>
+                                <button type="submit">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* Chat Popup */}
             {isChatOpen && (
@@ -117,8 +275,8 @@ const Communities = () => {
                     </div>
                     <div className="chat-body">
                         <div className="chat-message incoming">
-                            <span className="msg-use">NewUser:</span>
-                            <span className="msg-text">Is this the official chat?</span>
+                            <span className="msg-use">System:</span>
+                            <span className="msg-text">Welcome to {selectedCommunity?.name} chat!</span>
                         </div>
                     </div>
                     <div className="chat-input">

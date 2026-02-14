@@ -1,60 +1,50 @@
 from rest_framework import serializers
-from .models import (
-    Community,
-    CommunityMember,
-    CommunityPost,
-    CommunityComment
-)
-
+from .models import Community, CommunityMember, CommunityPost, CommunityComment
+from users.serializers import UserSummarySerializer
 
 class CommunitySerializer(serializers.ModelSerializer):
+    creator = UserSummarySerializer(read_only=True)
+    member_count = serializers.SerializerMethodField()
+    is_member = serializers.SerializerMethodField()
 
     class Meta:
         model = Community
         fields = "__all__"
-        read_only_fields = ["creator"]
+        read_only_fields = ["creator", "created_at"]
 
-    def create(self, validated_data):
+    def get_member_count(self, obj):
+        return obj.members.count()
 
-        validated_data["creator"] = self.context["request"].user
-        community = super().create(validated_data)
-
-        # auto add creator as admin
-        CommunityMember.objects.create(
-            community=community,
-            user=community.creator,
-            role="admin"
-        )
-
-        return community
-
-
-
-class CommunityMemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CommunityMember
-        fields = "__all__"
-
-
+    def get_is_member(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.members.filter(user=request.user).exists()
+        return False
 
 class CommunityPostSerializer(serializers.ModelSerializer):
+    user = UserSummarySerializer(read_only=True)
+    comments_count = serializers.SerializerMethodField()
+
     class Meta:
         model = CommunityPost
         fields = "__all__"
-        read_only_fields = ["user"]
+        read_only_fields = ["user", "created_at", "community"]
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
 
     def create(self, validated_data):
-        validated_data["user"] = self.context["request"].user
+        validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
-
-
 class CommunityCommentSerializer(serializers.ModelSerializer):
+    user = UserSummarySerializer(read_only=True)
+
     class Meta:
         model = CommunityComment
         fields = "__all__"
-        read_only_fields = ["user"]
+        read_only_fields = ["user", "created_at"]
 
     def create(self, validated_data):
-        validated_data["user"] = self.context["request"].user
+        validated_data['user'] = self.context['request'].user
         return super().create(validated_data)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Group, GroupMembership, Message
+from .models import Group, GroupMembership, Message, Intervention, InterventionMessage
 from users.serializers import UserSummarySerializer
 
 class GroupMembershipSerializer(serializers.ModelSerializer):
@@ -30,6 +30,23 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def get_member_count(self, obj):
         return obj.memberships.count()
+
+class InterventionMessageSerializer(serializers.ModelSerializer):
+    user = UserSummarySerializer(read_only=True)
+    
+    class Meta:
+        model = InterventionMessage
+        fields = ['id', 'user', 'content', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+class InterventionSerializer(serializers.ModelSerializer):
+    created_by = UserSummarySerializer(read_only=True)
+    messages = InterventionMessageSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Intervention
+        fields = ['id', 'group', 'title', 'target', 'status', 'created_at', 'created_by', 'messages']
+        read_only_fields = ['created_by', 'created_at', 'messages']
 
 class MessageSerializer(serializers.ModelSerializer):
     user = UserSummarySerializer(read_only=True)

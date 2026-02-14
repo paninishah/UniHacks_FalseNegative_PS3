@@ -7,6 +7,9 @@ from .views import (
     LeaveGroupView,
     GroupMembersView,
     GroupMessageView,
+    InterventionListCreateView,
+    InterventionDetailView,
+    InterventionMessageCreateView,
 )
 
 urlpatterns = [
@@ -17,4 +20,7 @@ urlpatterns = [
     path('<int:group_id>/leave/', LeaveGroupView.as_view()),
     path('<int:group_id>/members/', GroupMembersView.as_view()),
     path('<int:group_id>/messages/', GroupMessageView.as_view()),
+    path('<int:group_id>/interventions/', InterventionListCreateView.as_view()),
+    path('interventions/<int:pk>/', InterventionDetailView.as_view()),
+    path('interventions/<int:intervention_id>/messages/', InterventionMessageCreateView.as_view()),
 ]

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
 import './Groups.css';
+import InterventionList from './Interventions/InterventionList';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -69,7 +70,8 @@ const GroupDetails = () => {
         try {
             const postData = {
                 text_content: newPostContent,
-                group: groupId
+                group: groupId,
+                category: 'news_bite'
             };
             await api.post(ENDPOINTS.SOCIAL.CREATE, postData);
             setNewPostContent('');
@@ -158,50 +160,75 @@ const GroupDetails = () => {
 
             <div className="group-content-area">
                 {group.is_member ? (
-                    <div className="group-feed">
-                        {/* Feed UI */}
-                        <div className="create-post-card">
-                            <form onSubmit={handleCreatePost}>
-                                <textarea
-                                    placeholder={`What's on your mind for ${group.name}?`}
-                                    value={newPostContent}
-                                    onChange={(e) => setNewPostContent(e.target.value)}
-                                    rows="3"
-                                />
-                                <div className="post-actions">
-                                    <button type="submit" disabled={posting || !newPostContent.trim()}>
-                                        {posting ? 'Posting...' : 'Post'}
-                                    </button>
-                                </div>
-                            </form>
+                    <div className="group-feed-container">
+                        {/* Interventions Section */}
+                        <div className="interventions-section">
+                            <InterventionList groupId={groupId} isMember={group.is_member} />
                         </div>
 
-                        <div className="posts-list">
-                            {posts.length === 0 ? (
-                                <p className="no-posts">No posts yet. Be the first!</p>
-                            ) : (
-                                posts.map(post => (
-                                    <div key={post.id} className="post-card">
-                                        <div className="post-header">
-                                            <span className="post-author">{post.user?.name || post.user?.username || 'Unknown User'}</span>
-                                            <span className="post-time">{new Date(post.created_at).toLocaleString()}</span>
-                                        </div>
-                                        <div className="post-body">
-                                            {post.headline_generated && <h3>{post.headline_generated}</h3>}
-                                            <p>{post.text_content}</p>
-                                        </div>
-                                        <div className="post-footer">
-                                            <span>{post.reactions ? Object.values(post.reactions).reduce((a, b) => a + b, 0) : 0} Reactions</span>
-                                            <span>{post.comments_count || 0} Comments</span>
-                                        </div>
+                        {/* Newsbites Feed */}
+                        <div className="newsbites-feed">
+                            <h2 className="newsbites-label">NEWSBITES 📰</h2>
+
+                            <div className="create-post-card">
+                                <form onSubmit={handleCreatePost}>
+                                    <textarea
+                                        placeholder={`What's the tea in ${group.name}? ☕`}
+                                        value={newPostContent}
+                                        onChange={(e) => setNewPostContent(e.target.value)}
+                                        rows="3"
+                                    />
+                                    <div className="post-actions">
+                                        <button type="submit" disabled={posting || !newPostContent.trim()}>
+                                            {posting ? 'Posting...' : 'Post'}
+                                        </button>
                                     </div>
-                                ))
-                            )}
+                                </form>
+                            </div>
+
+                            <div className="feed-grid">
+                                {posts.length === 0 ? (
+                                    <p className="no-posts">No news bites yet. Spill something!</p>
+                                ) : (
+                                    posts.map((post, index) => (
+                                        <div key={post.id} className={`feed-post type-${post.category || 'news_bite'} ${index % 5 === 0 ? 'span-col-2' : ''}`}>
+                                            <div className="post-header">
+                                                <div className="post-user-info">
+                                                    <div className="post-pfp" style={{ backgroundImage: `url(${post.user?.profile_picture || ''})` }}></div>
+                                                    <div className="post-meta">
+                                                        <span className="post-name">{post.user?.name || post.user?.username}</span>
+                                                        <span className="post-username">@{post.user?.username}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="post-badges">
+                                                    <span className={`type-badge badge-${post.category || 'news_bite'}`}>{(post.category || 'NEWS BITE').replace('_', ' ').toUpperCase()}</span>
+                                                    <span className="post-time">{new Date(post.created_at).toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                            <div className="post-content">
+                                                {post.headline_generated && <h3 className="post-headline">{post.headline_generated}</h3>}
+                                                <p className="post-text">{post.text_content}</p>
+                                            </div>
+                                            <div className="post-bottom">
+                                                <div className="post-actions">
+                                                    <button className="reaction-btn goat">🐐 {post.reactions ? post.reactions.goat : 0}</button>
+                                                    <button className="reaction-btn clown">🤡 {post.reactions ? post.reactions.clown : 0}</button>
+                                                    <button className="reaction-btn redflag">🚩 {post.reactions ? post.reactions.redflag : 0}</button>
+                                                    <button className="reaction-btn iconic">✨ {post.reactions ? post.reactions.iconic : 0}</button>
+                                                </div>
+                                                <div className="post-footer">
+                                                    <span>{post.comments_count || 0} Comments</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
                 ) : (
                     <div className="locked-content">
-                        <p>Join this group to see posts and interact with members.</p>
+                        <p>Join {group.name} to unlock Newsbites and Interventions.</p>
                     </div>
                 )}
             </div>

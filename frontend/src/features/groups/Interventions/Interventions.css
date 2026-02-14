@@ -1,0 +1,182 @@
+.intervention-list-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 12px;
+}
+
+.intervention-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.intervention-header h3 {
+    color: #ff4d4d;
+    margin: 0;
+}
+
+.create-int-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.create-int-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.create-int-form input {
+    flex: 1;
+    padding: 8px;
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 4px;
+}
+
+.intervention-cards {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.intervention-card {
+    min-width: 250px;
+    background: #1e1e1e;
+    padding: 15px;
+    border-left: 4px solid #ff4d4d;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.intervention-card:hover {
+    transform: translateY(-2px);
+    background: #252525;
+}
+
+/* Intervention Page */
+.intervention-page {
+    padding: 20px;
+    min-height: 100vh;
+    background: #000;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+.intervention-banner {
+    background: repeating-linear-gradient(45deg,
+            #ff4d4d,
+            #ff4d4d 10px,
+            #000 10px,
+            #000 20px);
+    padding: 40px;
+    text-align: center;
+    border: 4px solid white;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.intervention-banner h1 {
+    font-size: 4rem;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.intervention-banner h2 {
+    font-size: 2rem;
+    margin: 10px 0;
+    background: black;
+    display: inline-block;
+    padding: 5px 20px;
+}
+
+.caution-tape {
+    background: yellow;
+    color: black;
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.statements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 40px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.statement-card {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.statement-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #888;
+}
+
+.statement-text {
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.add-statement-form {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.add-statement-form textarea {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 100px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.add-statement-form button {
+    background: white;
+    color: black;
+    border: none;
+    padding: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+}
+
+.add-statement-form button:hover {
+    background: #ddd;
+}
