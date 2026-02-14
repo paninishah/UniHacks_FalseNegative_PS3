@@ -12,6 +12,35 @@ class CreatePostView(generics.CreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        post = serializer.save()
+        try:
+            from notifications.utils import notify_group_members, notify_all_users
+            preview = (post.text_content or post.caption or '')[:60]
+            
+            if post.group:
+                # Group post (newsbite) — notify group members
+                notify_group_members(
+                    post.group,
+                    'post_group',
+                    f'📰 New post in {post.group.name}',
+                    f'{post.user.username} posted in {post.group.name}: "{preview}..."',
+                    exclude_user=post.user,
+                    group_id=post.group.id,
+                    post_id=post.id,
+                )
+            else:
+                # Newsroom post — notify all users
+                notify_all_users(
+                    'post_newsroom',
+                    '📢 New post in Newsroom',
+                    f'{post.user.username} posted: "{preview}..."',
+                    exclude_user=post.user,
+                    post_id=post.id,
+                )
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"Notification error: {e}")
 
 class FeedView(generics.ListAPIView):
 

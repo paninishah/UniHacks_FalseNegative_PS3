@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'analytics',
     'chatbot',
     'communities',
+    'notifications',
     'recap',
     'channels',
     'music',

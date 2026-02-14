@@ -7,6 +7,28 @@ class CreateCapsuleView(generics.CreateAPIView):
     serializer_class = TimeCapsuleSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        capsule = serializer.save(owner=self.request.user)
+        from notifications.utils import create_notification, notify_group_members
+        
+        # Notify the owner that their capsule is scheduled
+        create_notification(
+            self.request.user,
+            'capsule_unlocked',
+            '⏳ Time Capsule Created!',
+            f'Your capsule will unlock on {capsule.unlock_date.strftime("%b %d, %Y")}. Hang tight!',
+        )
+        
+        # If it's a group capsule, notify group members
+        if capsule.group:
+            notify_group_members(
+                capsule.group,
+                'capsule_unlocked',
+                f'💊 New Time Capsule in {capsule.group.name}',
+                f'{self.request.user.username} created a time capsule that unlocks on {capsule.unlock_date.strftime("%b %d, %Y")}!',
+                exclude_user=self.request.user,
+                group_id=capsule.group.id,
+            )
 
 class MyCapsulesView(generics.ListAPIView):
     serializer_class = TimeCapsuleSerializer

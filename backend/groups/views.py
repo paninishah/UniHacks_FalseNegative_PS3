@@ -16,6 +16,15 @@ class GroupListCreateView(generics.ListCreateAPIView):
         group = serializer.save(admin=self.request.user)
         # Add creator as admin member
         GroupMembership.objects.create(group=group, user=self.request.user, role='admin')
+        # Notify all users about the new group
+        from notifications.utils import notify_all_users
+        notify_all_users(
+            'group_created',
+            f'🏠 New Group: {group.name}',
+            f'{self.request.user.username} created a new group "{group.name}". Join the fun!',
+            exclude_user=self.request.user,
+            group_id=group.id,
+        )
 
 class MyGroupsView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]

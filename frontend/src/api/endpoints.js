@@ -73,5 +73,11 @@ export const ENDPOINTS = {
     },
     ENGAGEMENT: {
         // checks etc
+    },
+    NOTIFICATIONS: {
+        LIST: '/api/notifications/',
+        MARK_READ: (id) => `/api/notifications/${id}/read/`,
+        MARK_ALL_READ: '/api/notifications/read-all/',
+        UNREAD_COUNT: '/api/notifications/unread-count/',
     }
 };

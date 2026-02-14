@@ -5,18 +5,36 @@
     color: var(--text-color);
 }
 
+.notif-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
 .notif-title {
     font-family: var(--font-heading);
     font-size: 2rem;
     color: var(--color-yellow);
-    margin-bottom: 30px;
     letter-spacing: 1px;
+    margin: 0;
+}
+
+.notif-badge {
+    background: var(--color-purple);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
 }
 
 .notif-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .notif-item {
@@ -41,8 +59,128 @@
     background-color: rgba(114, 3, 156, 0.05);
 }
 
+.notif-item.read {
+    opacity: 0.65;
+}
+
 .notif-icon-col {
     flex-shrink: 0;
+}
+
+.notif-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+.notif-icon.post_newsroom {
+    border-color: #f59e0b;
+}
+
+.notif-icon.post_group {
+    border-color: #7c3aed;
+}
+
+.notif-icon.post_community {
+    border-color: #3b82f6;
+}
+
+.notif-icon.group_created {
+    border-color: #10b981;
+}
+
+.notif-icon.community_created {
+    border-color: #06b6d4;
+}
+
+.notif-icon.capsule_unlocked {
+    border-color: #f43f5e;
+}
+
+.notif-content-col {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.notif-title-text {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+
+.notif-text {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notif-time {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notif-status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-purple);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mark-all-btn {
+    margin-bottom: 20px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
+    padding: 8px 18px;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.mark-all-btn:hover {
+    border-color: var(--color-purple);
+    color: white;
+    background-color: rgba(124, 58, 237, 0.1);
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #555;
+}
+
+.notif-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.notif-empty p {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.notif-empty small {
+    font-size: 0.8rem;
+    color: #444;
 }
 
 .notif-pfp {
@@ -53,59 +191,10 @@
 }
 
 .notif-icon.system {
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    font-size: 1.2rem;
-    background-color: #222;
-    border: 1px solid #444;
     color: var(--color-yellow);
-}
-
-.notif-content-col {
-    flex-grow: 1;
-}
-
-.notif-text {
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 4px;
 }
 
 .notif-user {
     font-weight: 700;
     color: white;
-}
-
-.notif-time {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.notif-status-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--color-purple);
-    border-radius: 50%;
-    /* Just a dot */
-}
-
-.mark-all-btn {
-    margin-top: 30px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.6);
-    padding: 10px 20px;
-    font-family: var(--font-heading);
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-}
-
-.mark-all-btn:hover {
-    border-color: white;
-    color: white;
-    background-color: rgba(255, 255, 255, 0.05);
 }

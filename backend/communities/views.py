@@ -12,6 +12,15 @@ class CommunityListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         community = serializer.save(creator=self.request.user)
         CommunityMember.objects.create(community=community, user=self.request.user, role='admin')
+        # Notify all users about the new community
+        from notifications.utils import notify_all_users
+        notify_all_users(
+            'community_created',
+            f'🌐 New Community: {community.name}',
+            f'{self.request.user.username} created "{community.name}". Check it out!',
+            exclude_user=self.request.user,
+            community_id=community.id,
+        )
 
 class CommunityDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated] # Or AllowAny for read
@@ -52,7 +61,17 @@ class CommunityPostListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         community = get_object_or_404(Community, id=self.kwargs['community_id'])
-        serializer.save(user=self.request.user, community=community)
+        post = serializer.save(user=self.request.user, community=community)
+        # Notify community members about the new post
+        from notifications.utils import notify_community_members
+        notify_community_members(
+            community,
+            'post_community',
+            f'💬 New post in {community.name}',
+            f'{self.request.user.username} posted in {community.name}: "{post.content[:60]}..."',
+            exclude_user=self.request.user,
+            community_id=community.id,
+        )
 
 class CommunityPostDetailView(generics.RetrieveDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
