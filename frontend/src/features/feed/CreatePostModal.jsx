@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import client from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
 import feedAPI from '../../services/feedAPI';
+import cloudinaryService from '../../services/cloudinary';
 import './CreatePostModal.css';
 
 const CreatePostModal = ({ isOpen, onClose, onSuccess }) => {
@@ -37,8 +38,21 @@ const CreatePostModal = ({ isOpen, onClose, onSuccess }) => {
         if (postType === 'text') {
             formData.append('text_content', textContent);
         } else {
+            let finalImageUrl = textContent; // Default to text input (URL)
+
+            // If file selected, upload to Cloudinary first
             if (imageFile) {
-                formData.append('image', imageFile);
+                try {
+                    finalImageUrl = await cloudinaryService.uploadImage(imageFile);
+                } catch (uploadError) {
+                    setError("Failed to upload image. Please try again.");
+                    setLoading(false);
+                    return;
+                }
+            }
+
+            if (finalImageUrl && finalImageUrl.startsWith('http')) {
+                formData.append('image_url', finalImageUrl);
             }
             formData.append('caption', caption);
         }
@@ -111,18 +125,30 @@ const CreatePostModal = ({ isOpen, onClose, onSuccess }) => {
                         ></textarea>
                     ) : (
                         <div className="image-upload-container">
-                            {previewUrl ? (
-                                <div className="image-preview" style={{ backgroundImage: `url(${previewUrl})` }}>
+                            {/* Valid URL or File Preview */}
+                            {(previewUrl || (textContent && textContent.startsWith('http'))) ? (
+                                <div className="image-preview" style={{ backgroundImage: `url(${previewUrl || textContent})` }}>
                                     <button className="remove-image-btn" onClick={() => {
                                         setImageFile(null);
                                         setPreviewUrl(null);
+                                        setTextContent('');
                                     }}>×</button>
                                 </div>
                             ) : (
-                                <label className="image-upload-label">
-                                    <span>CLICK TO UPLOAD</span>
-                                    <input type="file" accept="image/*" onChange={handleImageChange} hidden />
-                                </label>
+                                <div className="image-input-options">
+                                    <label className="image-upload-label">
+                                        <span>UPLOAD FILE</span>
+                                        <input type="file" accept="image/*" onChange={handleImageChange} hidden />
+                                    </label>
+                                    <div className="cp-divider-text">OR PASTE LINK</div>
+                                    <input
+                                        type="url"
+                                        placeholder="https://..."
+                                        className="cp-input-url"
+                                        value={textContent}
+                                        onChange={(e) => setTextContent(e.target.value)}
+                                    />
+                                </div>
                             )}
                             <input
                                 type="text"

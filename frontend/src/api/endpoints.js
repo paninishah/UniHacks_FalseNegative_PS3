@@ -41,10 +41,16 @@ export const ENDPOINTS = {
     VAULT: {
         CREATE_CAPSULE: '/api/vault/capsule/create/',
         MY_CAPSULES: '/api/vault/capsule/mine/',
-        CREATE_ITEM: '/api/vault/vault/create/',
-        GENERATE_TOKEN: '/api/vault/vault/generate-token/',
-        GRANT: '/api/vault/vault/grant/',
+        CREATE_ITEM: '/api/vault/items/create/',
+        GENERATE_TOKEN: '/api/vault/generate-token/',
+        GRANT: '/api/vault/grant/',
         ANALYZE_music: (id) => `/api/vault/capsule/${id}/analyze-music/`,
+
+        FOLDERS: '/api/vault/folders/',
+        FOLDER_DETAIL: (id) => `/api/vault/folders/${id}/`,
+        UNLOCK_FOLDER: (id) => `/api/vault/folders/${id}/unlock/`,
+        USER_FOLDERS: (id) => `/api/vault/folders/user/${id}/`,
+        ADD_ITEM: '/api/vault/add-item/',
     },
     MUSIC: {
         ANALYZE: '/api/music/analyze/',

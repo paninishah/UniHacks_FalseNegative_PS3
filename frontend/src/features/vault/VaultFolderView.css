@@ -1,0 +1,146 @@
+.vault-folder-view {
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+}
+
+.folder-header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    color: var(--color-yellow);
+    margin: 0;
+    flex: 1;
+}
+
+.item-count {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-heading);
+}
+
+.back-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+}
+
+.folder-lock-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    text-align: center;
+}
+
+.lock-content {
+    background: #111;
+    padding: 40px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.lock-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.vault-key-input {
+    background: #000;
+    border: 1px solid #444;
+    color: var(--color-purple);
+    font-family: monospace;
+    font-size: 1.5rem;
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+    margin: 20px 0;
+    display: block;
+}
+
+.unlock-btn {
+    background: var(--color-purple);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.vault-item {
+    background: #111;
+    border: 1px solid #333;
+    aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.vault-item:hover {
+    transform: scale(1.02);
+    border-color: var(--color-pink);
+}
+
+.vault-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vault-post-preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.vp-image {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+.vp-text {
+    flex: 1;
+    padding: 15px;
+    font-size: 0.9rem;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.vp-meta {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+}
+
+.vault-text-item {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #ccc;
+}

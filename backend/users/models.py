@@ -20,6 +20,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to="pfp/", null=True, blank=True)
+    profile_picture_url = models.URLField(max_length=2000, null=True, blank=True)
     onboarding_completed = models.BooleanField(default=False)
 
     points = models.IntegerField(default=0)

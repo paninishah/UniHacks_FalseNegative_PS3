@@ -5,12 +5,14 @@ import { ENDPOINTS } from '../../api/endpoints';
 import feedAPI from '../../services/feedAPI';
 import CreatePostModal from './CreatePostModal';
 import CommentsModal from './CommentsModal';
+import AddToVaultModal from '../vault/AddToVaultModal';
 
 const Feed = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+    const [vaultPostId, setVaultPostId] = useState(null);
 
     const formatTimeAgo = (dateString) => {
         const date = new Date(dateString);
@@ -30,23 +32,27 @@ const Feed = () => {
         setLoading(true);
         try {
             const data = await feedAPI.getFeed();
-            const mappedPosts = data.map((post, index) => ({
-                id: post.id,
-                user: {
-                    name: post.user.name,
-                    username: `@${post.user.username}`,
-                    pfp: post.user.profile_picture || (post.user.email ? `https://ui-avatars.com/api/?name=${post.user.name}&background=random` : '')
-                },
-                type: post.category, // Backend category matches frontend type mostly
-                content: post.text_content,
-                caption: post.caption,
-                headline: post.headline_generated,
-                imageUrl: post.image,
-                time: formatTimeAgo(post.created_at),
-                reactions: post.reactions,
-                comments: post.comments_count,
-                gridClass: index % 5 === 0 ? 'span-col-2' : '' // Simple grid logic for now
-            }));
+            const mappedPosts = data.map((post, index) => {
+                const pfp = post.user?.profile_picture_url || post.user?.profile_picture || (post.user?.email ? `https://ui-avatars.com/api/?name=${post.user.name}&background=random` : '');
+
+                return {
+                    id: post.id,
+                    user: {
+                        name: post.user.name,
+                        username: `@${post.user.username}`,
+                        pfp: pfp
+                    },
+                    type: post.category, // Backend category matches frontend type mostly
+                    content: post.text_content,
+                    caption: post.caption,
+                    headline: post.headline_generated,
+                    imageUrl: post.image_url || post.image,
+                    time: formatTimeAgo(post.created_at),
+                    reactions: post.reactions,
+                    comments: post.comments_count,
+                    gridClass: index % 5 === 0 ? 'span-col-2' : '' // Simple grid logic for now
+                };
+            });
             setPosts(mappedPosts);
         } catch (error) {
             console.error("Failed to fetch feed", error);
@@ -152,6 +158,7 @@ const Feed = () => {
 
                             <div className="post-footer">
                                 <button className="footer-btn" onClick={() => setActiveCommentPostId(post.id)}>💬 {post.comments}</button>
+                                <button className="footer-btn" onClick={() => setVaultPostId(post.id)}>💾 SAVE</button>
                                 <button className="footer-btn">↗</button>
                             </div>
                         </div>
@@ -163,6 +170,13 @@ const Feed = () => {
                 isOpen={!!activeCommentPostId}
                 onClose={() => setActiveCommentPostId(null)}
                 postId={activeCommentPostId}
+            />
+
+            {/* Add to Vault Modal */}
+            <AddToVaultModal
+                isOpen={!!vaultPostId}
+                onClose={() => setVaultPostId(null)}
+                postId={vaultPostId}
             />
         </div>
     );

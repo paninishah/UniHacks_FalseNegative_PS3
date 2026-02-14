@@ -1,0 +1,70 @@
+.atv-modal {
+    background: #0a0a0a;
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+    border: 2px solid var(--color-yellow);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.atv-modal h2 {
+    font-family: var(--font-heading);
+    color: var(--color-yellow);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.folder-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    padding: 10px;
+}
+
+.folder-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #222;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.folder-option:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.folder-option.selected {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid var(--color-yellow);
+}
+
+.folder-icon {
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+.folder-name {
+    flex: 1;
+    font-family: var(--font-body);
+    font-weight: 600;
+}
+
+.folder-count {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.atv-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.no-folders {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}

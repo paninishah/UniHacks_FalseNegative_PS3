@@ -106,21 +106,92 @@ class AnalyzeCapsuleMusicView(APIView):
         derived_energy = avg_bpm / 180.0
         derived_valence = 0.8 if "Party" in vibe or "Mainstream" in vibe else 0.4
         
-        analysis, created = CapsuleMusicAnalysis.objects.update_or_create(
-            capsule=capsule,
-            defaults={
-                "dominant_vibe": vibe,
-                "avg_valence": derived_valence,
-                "avg_energy": derived_energy,
-                "avg_danceability": 0.5, # Placeholder
-                "shared_anthem_track_id": str(anthem["id"]),
-                # Store the full anthem data in a scalable way (e.g. JSONField if model updated, or just ID)
-            }
-        )
+class VaultFolderListCreate(generics.ListCreateAPIView):
+    serializer_class = VaultFolderSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        return VaultFolder.objects.filter(owner=self.request.user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class VaultFolderDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = VaultFolderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return VaultFolder.objects.filter(owner=self.request.user)
+
+
+class VaultFolderUnlock(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, folder_id):
+        try:
+            folder = VaultFolder.objects.get(id=folder_id)
+        except VaultFolder.DoesNotExist:
+            return Response({"error": "Folder not found"}, status=404)
+
+        # Check access
+        access_code = request.data.get("access_code")
+        
+        # If owner, allow without code (or with, doesn't matter)
+        if folder.owner == request.user:
+            pass # Allowed
+        elif folder.access_code == access_code:
+            pass # Allowed
+        else:
+            return Response({"error": "Invalid access key"}, status=403)
+
+        # Return items
+        items = folder.items.all().order_by('-created_at')
+        serializer = PrivateVaultItemSerializer(items, many=True)
         return Response({
-            "vibe": vibe,
-            "avg_bpm": avg_bpm,
-            "anthem": anthem,
-            "analysis_id": analysis.id
+            "folder": VaultFolderSerializer(folder).data,
+            "items": serializer.data
         })
+
+
+class UserVaultFolders(generics.ListAPIView):
+    serializer_class = VaultFolderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        # Return all folders (locked state handles the rest)
+        return VaultFolder.objects.filter(owner__id=user_id).order_by('-created_at')
+
+
+class AddToVaultView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        folder_id = request.data.get("folder_id")
+        post_id = request.data.get("post_id")
+        
+        if not folder_id:
+             return Response({"error": "Folder ID required"}, status=400)
+
+        try:
+            folder = VaultFolder.objects.get(id=folder_id, owner=request.user)
+        except VaultFolder.DoesNotExist:
+             return Response({"error": "Folder not found"}, status=404)
+
+        if post_id:
+             try:
+                 from social.models import Post
+                 post = Post.objects.get(id=post_id)
+                 
+                 # Create item linked to post
+                 PrivateVaultItem.objects.create(
+                     owner=request.user,
+                     folder=folder,
+                     post=post
+                 )
+                 return Response({"message": "Saved to vault!"})
+             except Post.DoesNotExist:
+                 return Response({"error": "Post not found"}, status=404)
+        
+        return Response({"error": "Post ID required"}, status=400)

@@ -22,7 +22,13 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = [
+            "id", "user", "group", "post_type", "category",
+            "text_content", "image", "image_url", "caption",
+            "headline_generated", "vanish_mode", "visibility",
+            "sentiment_score", "is_deleted", "created_at",
+            "reactions", "comments_count"
+        ]
         read_only_fields = ["user", "headline_generated", "sentiment_score", "is_deleted"]
 
     def get_reactions(self, obj):

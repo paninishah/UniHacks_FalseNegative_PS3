@@ -9,6 +9,7 @@ import Groups from '../features/groups/Groups';
 import GroupDetails from '../features/groups/GroupDetails';
 import InterventionPage from '../features/groups/Interventions/InterventionPage';
 import Communities from '../features/communities/Communities';
+import CommunityFeed from '../features/communities/CommunityFeed';
 import Vault from '../features/vault/Vault';
 import Analytics from '../features/analytics/Analytics';
 import Notifications from '../features/notifications/Notifications';
@@ -36,7 +37,9 @@ const AppRoutes = () => {
                     <Route path="/groups/:groupId" element={<GroupDetails />} />
                     <Route path="/groups/interventions/:interventionId" element={<InterventionPage />} />
                     <Route path="/communities" element={<Communities />} />
+                    <Route path="/communities/:communityId" element={<CommunityFeed />} /> {/* Added CommunityFeed route */}
                     <Route path="/vault" element={<Vault />} />
+                    <Route path="/vault/:userId" element={<Vault />} /> {/* Added vault user route */}
                     <Route path="/recap" element={<RecapPage />} />
                     <Route path="/analytics" element={<Analytics />} />
                     <Route path="/notifications" element={<Notifications />} />

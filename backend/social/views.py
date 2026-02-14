@@ -12,6 +12,13 @@ class CreatePostView(generics.CreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def post(self, request, *args, **kwargs):
+        print("DEBUG: Received Post Data:", request.data)
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("DEBUG: Validation Errors:", serializer.errors)
+        return super().post(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         post = serializer.save()
         try:

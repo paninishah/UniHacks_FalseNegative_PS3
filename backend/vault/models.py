@@ -74,12 +74,39 @@ class CapsuleAccess(models.Model):
 # PRIVATE MEDIA VAULT
 # =========================
 
+class VaultFolder(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vault_folders")
+    name = models.CharField(max_length=50)
+    access_code = models.CharField(max_length=50, help_text="Password/Key to unlock")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.owner.username})"
+
+
 class PrivateVaultItem(models.Model):
 
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="private_vault_items"
+    )
+
+    folder = models.ForeignKey(
+        VaultFolder,
+        on_delete=models.CASCADE,
+        related_name="items",
+        null=True,
+        blank=True
+    )
+
+    # Link to a social post (if saved from feed)
+    post = models.ForeignKey(
+        'social.Post',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vaulted_copies"
     )
 
     image = models.ImageField(upload_to="private_vault/", null=True, blank=True)

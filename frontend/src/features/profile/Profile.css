@@ -32,6 +32,14 @@
     background-color: #000;
     border: 4px solid var(--bg-color);
     border-radius: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+/* Fallback pattern when no profile picture */
+.profile-pfp:not([style*="http"]) {
     background-image: linear-gradient(135deg, #333 25%, transparent 25%),
         linear-gradient(225deg, #333 25%, transparent 25%),
         linear-gradient(45deg, #333 25%, transparent 25%),
@@ -223,21 +231,30 @@
 .image-row {
     display: flex;
     gap: 24px;
-    align-items: stretch;
+    align-items: flex-start;
 }
 
 .post-img-side {
     flex: 0 0 45%;
-    max-width: 380px;
+    max-width: 420px;
+    min-width: 280px;
+    max-height: 400px;
     overflow: hidden;
     background: #111;
     border-left: 3px solid var(--color-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 .post-full-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    /* changed to contain to show full image if needed, or cover */
     display: block;
 }
 

@@ -36,6 +36,7 @@ class Post(models.Model):
 
     text_content = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="posts/", null=True, blank=True)
+    image_url = models.URLField(max_length=2000, null=True, blank=True)
     caption = models.CharField(max_length=255, blank=True)
 
     headline_generated = models.TextField(blank=True, null=True)

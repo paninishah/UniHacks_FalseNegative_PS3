@@ -5,6 +5,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Profile.css';
 
+import cloudinaryService from '../../services/cloudinary';
+import AddToVaultModal from '../vault/AddToVaultModal';
+
 const Profile = () => {
     const { userId } = useParams();
     const { user } = useAuth();
@@ -15,11 +18,14 @@ const Profile = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
+    const [vaultPostId, setVaultPostId] = useState(null);
 
     // Edit Profile state
     const [isEditOpen, setEditOpen] = useState(false);
     const [editName, setEditName] = useState('');
     const [editBio, setEditBio] = useState('');
+    const [editPfpUrl, setEditPfpUrl] = useState('');
+    const [editPfpFile, setEditPfpFile] = useState(null); // New state for file
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -67,13 +73,32 @@ const Profile = () => {
     const openEditModal = () => {
         setEditName(profileUser?.name || profileUser?.username || '');
         setEditBio(profileUser?.bio || '');
+        setEditPfpUrl(profileUser?.profile_picture_url || profileUser?.profile_picture || '');
+        setEditPfpFile(null);
         setEditOpen(true);
     };
 
     const handleSaveProfile = async () => {
         setSaving(true);
         try {
-            const updated = await authAPI.updateProfile({ name: editName, bio: editBio });
+            let finalPfpUrl = editPfpUrl;
+
+            // Upload to Cloudinary if file selected
+            if (editPfpFile) {
+                finalPfpUrl = await cloudinaryService.uploadImage(editPfpFile);
+            }
+
+            const payload = {
+                name: editName,
+                bio: editBio
+            };
+
+            // If it looks like a URL, send as profile_picture_url
+            if (finalPfpUrl && finalPfpUrl.startsWith('http')) {
+                payload.profile_picture_url = finalPfpUrl;
+            }
+
+            const updated = await authAPI.updateProfile(payload);
             setProfileUser(prev => ({ ...prev, ...updated }));
             setEditOpen(false);
         } catch (error) {
@@ -103,10 +128,27 @@ const Profile = () => {
         return map[category] || { label: category?.toUpperCase() || '', color: '#888' };
     };
 
-    if (loading) return <div className="loading-screen">LOADING...</div>;
-    if (!profileUser && isOwnProfile) return <div className="error-screen">FAILED TO LOAD PROFILE</div>;
+    // ... (rest of helper functions)
 
-    const displayUser = profileUser || { username: 'Unknown', name: 'Unknown' };
+    if (loading) return <div className="loading-screen">LOADING...</div>;
+
+    // Safety check: if no profile user loaded and not own profile, show error
+    if (!loading && !profileUser && !isOwnProfile) return <div className="error-screen">FAILED TO LOAD PROFILE</div>;
+
+    // Use user context as fallback if own profile and profileUser is null (though should refer to profileUser mainly)
+    const effectiveUser = profileUser || (isOwnProfile ? user : null) || {};
+    const displayUser = {
+        name: effectiveUser.name || effectiveUser.username || 'Unknown',
+        username: effectiveUser.username || 'unknown',
+        bio: effectiveUser.bio || '',
+        posts_count: effectiveUser.posts_count || 0,
+        followers_count: effectiveUser.followers_count || 0,
+        following_count: effectiveUser.following_count || 0,
+        profile_picture: effectiveUser.profile_picture,
+        profile_picture_url: effectiveUser.profile_picture_url
+    };
+
+    const displayPfp = displayUser.profile_picture_url || displayUser.profile_picture || '';
 
     return (
         <div className="profile-container">
@@ -116,7 +158,7 @@ const Profile = () => {
             {/* Header Section */}
             <div className="profile-header">
                 <div className="profile-pfp-container">
-                    <div className="profile-pfp" style={{ backgroundImage: `url(${displayUser.profile_picture || ''})` }}></div>
+                    <div className="profile-pfp" style={{ backgroundImage: `url(${displayPfp})` }}></div>
                 </div>
 
                 <div className="profile-info">
@@ -153,9 +195,14 @@ const Profile = () => {
                                 </button>
                             </>
                         ) : (
-                            <button className="action-btn follow-btn" onClick={handleFollow}>
-                                {isFollowing ? 'UNFOLLOW' : 'FOLLOW'}
-                            </button>
+                            <>
+                                <button className="action-btn follow-btn" onClick={handleFollow}>
+                                    {isFollowing ? 'UNFOLLOW' : 'FOLLOW'}
+                                </button>
+                                <button className="action-btn vault-btn" onClick={() => navigate(`/vault/${profileUser.id}`)}>
+                                    OPEN VAULT 🔒
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>
@@ -169,7 +216,9 @@ const Profile = () => {
             {/* Posts List — Tumblr-style rows */}
             <div className="profile-posts-list">
                 {posts.length > 0 ? posts.map((post) => {
-                    const isImage = post.post_type === 'image' && post.image;
+                    const postImg = post.image_url || post.image;
+                    // Check if it's an image post OR a meme with an image
+                    const isImage = (post.post_type === 'image' || post.category === 'meme') && postImg;
                     const badge = getCategoryBadge(post.category);
 
                     return (
@@ -177,7 +226,15 @@ const Profile = () => {
                             {isImage ? (
                                 <>
                                     <div className="post-img-side">
-                                        <img src={post.image} alt="Post" className="post-full-image" />
+                                        <img
+                                            src={postImg}
+                                            alt="Post"
+                                            className="post-full-image"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none'; // Hide broken images
+                                                e.target.parentElement.style.display = 'none'; // Hide container
+                                            }}
+                                        />
                                     </div>
                                     <div className="post-caption-side">
                                         <span className="post-category-badge" style={{ color: badge.color, borderColor: badge.color }}>
@@ -187,11 +244,12 @@ const Profile = () => {
                                         <div className="post-meta-row">
                                             <span className="post-date">{formatDate(post.created_at)}</span>
                                             {post.reactions && (
-                                                <span className="post-reactions-mini">
+                                                <div className="post-reactions-mini">
                                                     {post.reactions.goat > 0 && `🐐${post.reactions.goat} `}
                                                     {post.reactions.iconic > 0 && `✨${post.reactions.iconic} `}
                                                     {post.reactions.clown > 0 && `🤡${post.reactions.clown}`}
-                                                </span>
+                                                    <button className="profile-save-btn" onClick={() => setVaultPostId(post.id)}>💾</button>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -208,11 +266,12 @@ const Profile = () => {
                                     <div className="post-meta-row">
                                         <span className="post-date">{formatDate(post.created_at)}</span>
                                         {post.reactions && (
-                                            <span className="post-reactions-mini">
+                                            <div className="post-reactions-mini">
                                                 {post.reactions.goat > 0 && `🐐${post.reactions.goat} `}
                                                 {post.reactions.iconic > 0 && `✨${post.reactions.iconic} `}
                                                 {post.reactions.clown > 0 && `🤡${post.reactions.clown}`}
-                                            </span>
+                                                <button className="profile-save-btn" onClick={() => setVaultPostId(post.id)}>💾</button>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -223,6 +282,17 @@ const Profile = () => {
                     <div className="no-posts">NO POSTS YET</div>
                 )}
             </div>
+            {/* ... Modal ... */}
+
+            {/* Comments Modal */}
+            {/* Same as Feed if needed, or separate impl */}
+
+            {/* Add to Vault Modal */}
+            <AddToVaultModal
+                isOpen={!!vaultPostId}
+                onClose={() => setVaultPostId(null)}
+                postId={vaultPostId}
+            />
 
             {/* Edit Profile Modal */}
             {isEditOpen && (
@@ -237,6 +307,35 @@ const Profile = () => {
                                 onChange={(e) => setEditName(e.target.value)}
                                 placeholder="Your display name"
                                 className="edit-input"
+                            />
+                        </div>
+                        <div className="edit-field">
+                            <label>Profile Picture</label>
+                            <div className="edit-pfp-preview-container">
+                                <div className="edit-pfp-preview" style={{ backgroundImage: `url(${editPfpFile ? URL.createObjectURL(editPfpFile) : editPfpUrl})`, width: '80px', height: '80px', borderRadius: '50%', backgroundSize: 'cover', border: '1px solid #333' }}></div>
+                                <div className="edit-pfp-actions">
+                                    <label className="upload-btn-label" style={{ display: 'inline-block', padding: '8px 12px', background: '#333', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginRight: '10px' }}>
+                                        UPLOAD NEW
+                                        <input type="file" accept="image/*" onChange={(e) => {
+                                            if (e.target.files[0]) {
+                                                setEditPfpFile(e.target.files[0]);
+                                                setEditPfpUrl(''); // Clear URL input if file selected
+                                            }
+                                        }} hidden />
+                                    </label>
+                                    <span style={{ color: '#666', fontSize: '0.8rem' }}>OR</span>
+                                </div>
+                            </div>
+                            <input
+                                type="url"
+                                value={editPfpUrl}
+                                onChange={(e) => {
+                                    setEditPfpUrl(e.target.value);
+                                    setEditPfpFile(null); // Clear file if URL typed
+                                }}
+                                placeholder="https://example.com/image.jpg"
+                                className="edit-input"
+                                style={{ marginTop: '10px' }}
                             />
                         </div>
                         <div className="edit-field">
