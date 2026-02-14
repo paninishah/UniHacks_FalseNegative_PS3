@@ -51,6 +51,21 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class PublicProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            profile = Profile.objects.get(user=user)
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        except Profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=404)
+
+
 from .models import Follow, User
 from .serializers import FollowSerializer
 

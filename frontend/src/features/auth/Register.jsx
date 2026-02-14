@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Auth.css';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { register } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         username: '',
@@ -11,22 +13,34 @@ const Register = () => {
         dob: '',
         password: '',
     });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Register submitted:', formData);
-        // Add auth logic here
-        navigate('/feed');
+        setError('');
+        setIsLoading(true);
+        const result = await register(formData);
+        setIsLoading(false);
+        if (result.success) {
+            // Redirect to login or feed? Plan said feed, but context says auto-login?
+            // The context implementation doesn't auto-login after register, so let's redirect to login
+            // Or better, auto-login? For now, redirect to login to be safe.
+            navigate('/login');
+        } else {
+            setError(result.error);
+        }
     };
 
     return (
         <div className="auth-container">
             <div className="auth-box">
                 <h2 className="auth-title">SIGN UP</h2>
+                {error && <div className="auth-error">{error}</div>}
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
                         <label htmlFor="name">NAME</label>
@@ -86,7 +100,9 @@ const Register = () => {
                             autoComplete="new-password"
                         />
                     </div>
-                    <button type="submit" className="auth-button">JOIN</button>
+                    <button type="submit" className="auth-button" disabled={isLoading}>
+                        {isLoading ? 'LOADING...' : 'JOIN'}
+                    </button>
                 </form>
                 <div className="auth-footer">
                     <p>ALREADY HAVE AN ACCOUNT? <Link to="/login" className="auth-link">LOGIN</Link></p>

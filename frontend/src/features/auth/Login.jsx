@@ -1,37 +1,48 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Auth.css';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
-        identifier: '',
+        username: '', // Changed from identifier to username to match backend expectation
         password: '',
     });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login submitted:', formData);
-        // Add auth logic here
-        navigate('/feed');
+        setError('');
+        setIsLoading(true);
+        const result = await login(formData.username, formData.password);
+        setIsLoading(false);
+        if (result.success) {
+            navigate('/feed');
+        } else {
+            setError(result.error);
+        }
     };
 
     return (
         <div className="auth-container">
             <div className="auth-box">
                 <h2 className="auth-title">LOGIN</h2>
+                {error && <div className="auth-error">{error}</div>}
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
-                        <label htmlFor="identifier">USERNAME / EMAIL</label>
+                        <label htmlFor="username">USERNAME</label>
                         <input
                             type="text"
-                            id="identifier"
-                            name="identifier"
-                            value={formData.identifier}
+                            id="username"
+                            name="username"
+                            value={formData.username}
                             onChange={handleChange}
                             required
                             autoComplete="username"
@@ -49,7 +60,9 @@ const Login = () => {
                             autoComplete="current-password"
                         />
                     </div>
-                    <button type="submit" className="auth-button">ENTER</button>
+                    <button type="submit" className="auth-button" disabled={isLoading}>
+                        {isLoading ? 'LOADING...' : 'ENTER'}
+                    </button>
                 </form>
                 <div className="auth-footer">
                     <p>NEW HERE? <Link to="/register" className="auth-link">CREATE ACCOUNT</Link></p>

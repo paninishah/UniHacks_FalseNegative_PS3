@@ -4,7 +4,11 @@ from .views import (
     FeedView,
     ReactView,
     CommentView,
+
+    PostCommentsView,
     SavePostView,
+    UserPostsView,
+    GroupPostsView,
 )
 
 urlpatterns = [
@@ -12,5 +16,8 @@ urlpatterns = [
     path("feed/", FeedView.as_view()),
     path("react/", ReactView.as_view()),
     path("comment/", CommentView.as_view()),
+    path("comments/<int:post_id>/", PostCommentsView.as_view()),
     path("save/", SavePostView.as_view()),
+    path("user-posts/<int:user_id>/", UserPostsView.as_view()),
+    path("group-posts/<int:group_id>/", GroupPostsView.as_view()),
 ]

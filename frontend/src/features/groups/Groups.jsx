@@ -1,157 +1,147 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
+import { ENDPOINTS } from '../../api/endpoints';
 import './Groups.css';
-import gamesIcon from '../../assets/icons/navbar/games.svg';
-import groupsIcon from '../../assets/icons/navbar/groups.svg'; // Using groups icon for chat as requested "groups.svg icon, in a purple box"
+import groupsIcon from '../../assets/icons/navbar/groups.svg';
 
 const Groups = () => {
-    const [selectedGroup, setSelectedGroup] = useState('hackathon');
-    const [isChatOpen, setChatOpen] = useState(false);
-    const [isGamesOpen, setGamesOpen] = useState(false);
+    const [groups, setGroups] = useState([]);
+    const [myGroups, setMyGroups] = useState([]);
+    const [viewMode, setViewMode] = useState('explore'); // 'explore' or 'mine'
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-    const groups = [
-        { id: 'hackathon', name: 'Hackathon Dream Team' },
-        { id: 'dorm', name: 'Dorm 3B Crew' },
-        { id: 'cs-class', name: 'CS 101 Study Group' }
-    ];
+    // Create Group State
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newGroupData, setNewGroupData] = useState({ name: '', description: '', is_public: true });
 
-    // Dummy posts for groups (Bento style)
-    const posts = [
-        {
-            id: 1,
-            user: { name: 'Sarah', username: '@sarahj' },
-            type: 'news-bite',
-            content: "WE WON THE HACKATHON GUYS!!! 🏆🎉",
-            time: '1m ago',
-            gridClass: 'span-row-2', // Tall announcement
-            category: 'hackathon'
-        },
-        {
-            id: 2,
-            user: { name: 'Mike', username: '@miker' },
-            type: 'meme',
-            caption: "Live footage of us coding last night",
-            imageUrl: 'https://via.placeholder.com/400',
-            time: '20m ago',
-            gridClass: '',
-            category: 'hackathon'
-        },
-        {
-            id: 3,
-            user: { name: 'Alex', username: '@alexc' },
-            type: 'casual',
-            content: "Pizza is here! 🍕",
-            time: '1h ago',
-            gridClass: '',
-            category: 'hackathon'
-        },
-        {
-            id: 4,
-            user: { name: 'Dorm Mom', username: '@jenny' },
-            type: 'roast',
-            content: "Whoever left their laundry in the dryer for 3 days... count your days.",
-            time: '10m ago',
-            gridClass: 'span-col-2',
-            category: 'dorm'
+    useEffect(() => {
+        fetchGroups();
+    }, [viewMode]);
+
+    const fetchGroups = async () => {
+        setLoading(true);
+        try {
+            if (viewMode === 'explore') {
+                const response = await api.get(ENDPOINTS.GROUPS.LIST);
+                setGroups(response.data);
+            } else {
+                const response = await api.get(ENDPOINTS.GROUPS.MINE);
+                setMyGroups(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching groups:", error);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
-    const filteredPosts = posts.filter(p => p.category === selectedGroup || p.category === 'hackathon'); // Fallback for demo
+    const handleCreateGroup = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post(ENDPOINTS.GROUPS.LIST, newGroupData);
+            setShowCreateModal(false);
+            setNewGroupData({ name: '', description: '', is_public: true });
+            setViewMode('mine'); // Switch to my groups to see new group
+            fetchGroups(); // Refresh
+        } catch (error) {
+            console.error("Error creating group:", error);
+            alert("Failed to create group.");
+        }
+    };
+
+    const handleGroupClick = (groupId) => {
+        navigate(`/groups/${groupId}`);
+    };
+
+    const displayGroups = viewMode === 'explore' ? groups : myGroups;
 
     return (
         <div className="groups-container">
-            {/* Header with Dropdown */}
             <div className="groups-header-bar">
-                <div className="group-selector">
-                    <label>CURRENT FEED:</label>
-                    <select
-                        value={selectedGroup}
-                        onChange={(e) => setSelectedGroup(e.target.value)}
-                        className="group-dropdown"
+                <div className="groups-tabs">
+                    <button
+                        className={`tab-btn ${viewMode === 'explore' ? 'active' : ''}`}
+                        onClick={() => setViewMode('explore')}
                     >
-                        {groups.map(g => (
-                            <option key={g.id} value={g.id}>{g.name.toUpperCase()}</option>
-                        ))}
-                    </select>
+                        EXPLORE GROUPS
+                    </button>
+                    <button
+                        className={`tab-btn ${viewMode === 'mine' ? 'active' : ''}`}
+                        onClick={() => setViewMode('mine')}
+                    >
+                        MY GROUPS
+                    </button>
                 </div>
+                <button className="create-group-btn" onClick={() => setShowCreateModal(true)}>
+                    + CREATE GROUP
+                </button>
             </div>
 
-            {/* Bento Feed */}
-            <div className="groups-feed-grid">
-                {filteredPosts.map(post => (
-                    <div key={post.id} className={`group-post type-${post.type} ${post.gridClass || ''}`}>
-                        <div className="post-header">
-                            <span className="post-user">{post.user.name}</span>
-                            <span className="post-time">{post.time}</span>
+            {loading ? (
+                <div className="loading-spinner">Loading groups...</div>
+            ) : (
+                <div className="groups-grid">
+                    {displayGroups.length === 0 ? (
+                        <div className="no-groups">
+                            {viewMode === 'explore' ? "No public groups found." : "You haven't joined any groups yet."}
                         </div>
-                        <div className="post-content">
-                            {post.type === 'meme' ? (
-                                <>
-                                    <p>{post.caption}</p>
-                                    <div className="post-img" style={{ backgroundImage: `url(${post.imageUrl})` }}></div>
-                                </>
-                            ) : (
-                                <p className="post-text">{post.content}</p>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Chat Popup */}
-            {isChatOpen && (
-                <div className="chat-popup">
-                    <div className="chat-header">
-                        <span>GROUP CHAT</span>
-                        <button onClick={() => setChatOpen(false)}>×</button>
-                    </div>
-                    <div className="chat-body">
-                        <div className="chat-message incoming">
-                            <span className="msg-use">Alex:</span>
-                            <span className="msg-text">Where are the designs?</span>
-                        </div>
-                        <div className="chat-message outgoing">
-                            <span className="msg-text">Uploading now!</span>
-                        </div>
-                    </div>
-                    <div className="chat-input">
-                        <input type="text" placeholder="Type a message..." />
-                    </div>
+                    ) : (
+                        displayGroups.map(group => (
+                            <div key={group.id} className="group-card" onClick={() => handleGroupClick(group.id)}>
+                                <div className="group-card-header">
+                                    <h3 className="group-name">{group.name}</h3>
+                                    <span className="group-members">{group.member_count} members</span>
+                                </div>
+                                <p className="group-desc">{group.description || "No description provided."}</p>
+                                <div className="group-footer">
+                                    {group.is_member ? (
+                                        <span className="member-badge">MEMBER</span>
+                                    ) : (
+                                        <span className="join-hint">Click to view</span>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             )}
 
-            {/* Games Popup */}
-            {isGamesOpen && (
-                <div className="games-popup">
-                    <div className="games-header">
-                        <span>ARCADE</span>
-                        <button onClick={() => setGamesOpen(false)}>×</button>
-                    </div>
-                    <div className="games-list">
-                        <div className="game-item">Most Likely To</div>
-                        <div className="game-item">Skribbl.io</div>
-                        <div className="game-item">Trivia</div>
+            {showCreateModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Create New Group</h2>
+                        <form onSubmit={handleCreateGroup}>
+                            <input
+                                type="text"
+                                placeholder="Group Name"
+                                value={newGroupData.name}
+                                onChange={(e) => setNewGroupData({ ...newGroupData, name: e.target.value })}
+                                required
+                            />
+                            <textarea
+                                placeholder="Description"
+                                value={newGroupData.description}
+                                onChange={(e) => setNewGroupData({ ...newGroupData, description: e.target.value })}
+                                required
+                            />
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={newGroupData.is_public}
+                                    onChange={(e) => setNewGroupData({ ...newGroupData, is_public: e.target.checked })}
+                                />
+                                Public Group
+                            </label>
+                            <div className="modal-actions">
+                                <button type="button" onClick={() => setShowCreateModal(false)}>Cancel</button>
+                                <button type="submit" className="primary-btn">Create</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
-
-            {/* FABs */}
-            <div className="groups-fabs">
-                {/* Games FAB (Yellow) */}
-                <button
-                    className="fab-games"
-                    onClick={() => setGamesOpen(!isGamesOpen)}
-                >
-                    <img src={gamesIcon} alt="Games" />
-                </button>
-
-                {/* Chat FAB (Purple) */}
-                <button
-                    className="fab-chat"
-                    onClick={() => setChatOpen(!isChatOpen)}
-                >
-                    <img src={groupsIcon} alt="Chat" />
-                </button>
-            </div>
         </div>
     );
 };

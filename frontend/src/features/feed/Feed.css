@@ -224,6 +224,17 @@
     /* Pushes bottom section down */
 }
 
+.post-headline {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
 .post-text {
     font-family: var(--font-body);
     font-size: 1rem;

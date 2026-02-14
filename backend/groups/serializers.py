@@ -1,75 +1,40 @@
 from rest_framework import serializers
-from .models import (
-    Group,
-    GroupMember,
-    Message,
-    RelationshipEdge,
-    CupidNomination,
-    CupidConsent
-)
+from .models import Group, GroupMembership, Message
+from users.serializers import UserSummarySerializer
 
+class GroupMembershipSerializer(serializers.ModelSerializer):
+    user = UserSummarySerializer(read_only=True)
+
+    class Meta:
+        model = GroupMembership
+        fields = ['id', 'user', 'role', 'joined_at']
 
 class GroupSerializer(serializers.ModelSerializer):
+    is_member = serializers.SerializerMethodField()
+    member_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
-        fields = "__all__"
-        read_only_fields = ["admin"]
+        fields = [
+            'id', 'name', 'description', 'admin', 'is_public', 
+            'allow_cupid', 'allow_relationship_graph', 'created_at',
+            'is_member', 'member_count'
+        ]
+        read_only_fields = ['admin', 'created_at']
 
-    def create(self, validated_data):
-        validated_data["admin"] = self.context["request"].user
-        group = super().create(validated_data)
+    def get_is_member(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return GroupMembership.objects.filter(group=obj, user=request.user).exists()
+        return False
 
-        # auto add admin as member
-        GroupMember.objects.create(
-            group=group,
-            user=group.admin,
-            role="admin"
-        )
-
-        return group
-
-
-
-class GroupMemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GroupMember
-        fields = "__all__"
-
-
+    def get_member_count(self, obj):
+        return obj.memberships.count()
 
 class MessageSerializer(serializers.ModelSerializer):
+    user = UserSummarySerializer(read_only=True)
+
     class Meta:
         model = Message
-        fields = "__all__"
-        read_only_fields = ["sender"]
-
-    def create(self, validated_data):
-        validated_data["sender"] = self.context["request"].user
-        return super().create(validated_data)
-
-
-
-class RelationshipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RelationshipEdge
-        fields = "__all__"
-
-
-
-class CupidNominationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CupidNomination
-        fields = "__all__"
-        read_only_fields = ["nominated_by"]
-
-    def create(self, validated_data):
-        validated_data["nominated_by"] = self.context["request"].user
-        return super().create(validated_data)
-
-
-
-class CupidConsentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CupidConsent
-        fields = "__all__"
+        fields = ['id', 'user', 'content', 'created_at']
+        read_only_fields = ['user', 'created_at']

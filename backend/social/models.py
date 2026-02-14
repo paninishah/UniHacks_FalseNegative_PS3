@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from groups.models import Group  # will exist later
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -29,7 +29,7 @@ class Post(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, blank=True)
+    group = models.ForeignKey('groups.Group', on_delete=models.CASCADE, null=True, blank=True, related_name='posts')
 
     post_type = models.CharField(max_length=10, choices=POST_TYPES)
     category = models.CharField(max_length=20, choices=CATEGORY)
@@ -113,7 +113,7 @@ class EphemeralEventLog(models.Model):
     """
 
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
-    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True)
+    group = models.ForeignKey('groups.Group', on_delete=models.SET_NULL, null=True, blank=True)
 
     message = models.CharField(
         max_length=255,
