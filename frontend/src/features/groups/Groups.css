@@ -8,6 +8,7 @@
 }
 
 /* --- LEFT SIDEBAR (My Groups) --- */
+/* --- LEFT SIDEBAR (My Groups) --- */
 .groups-sidebar {
     width: 260px;
     background-color: #111;
@@ -27,16 +28,15 @@
 
 .sidebar-header h2 {
     font-size: 1.1rem;
-    color: var(--color-green, #00ff88);
+    color: var(--color-yellow);
     margin: 0;
     letter-spacing: 1px;
 }
 
 .create-group-btn-sidebar {
     background: transparent;
-    color: var(--color-green, #00ff88);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    border-radius: 5px;
+    color: var(--color-yellow);
+    border: 1px solid rgba(255, 255, 0, 0.3);
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -49,8 +49,8 @@
 }
 
 .create-group-btn-sidebar:hover {
-    background: rgba(0, 255, 136, 0.1);
-    border-color: var(--color-green, #00ff88);
+    background: rgba(255, 255, 0, 0.1);
+    border-color: var(--color-yellow);
 }
 
 .sidebar-section-title {
@@ -71,7 +71,6 @@
 
 .group-item-sidebar {
     padding: 10px;
-    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -86,9 +85,9 @@
 }
 
 .group-item-sidebar.active {
-    background-color: rgba(0, 255, 136, 0.1);
-    color: var(--color-green, #00ff88);
-    border-left: 3px solid var(--color-green, #00ff88);
+    background-color: rgba(255, 255, 0, 0.1);
+    color: var(--color-yellow);
+    border-left: 3px solid var(--color-yellow);
 }
 
 .group-icon-small {
@@ -164,7 +163,6 @@
 .explore-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid #333;
-    border-radius: 12px;
     padding: 20px;
     cursor: pointer;
     transition: transform 0.2s;
@@ -177,7 +175,7 @@
 
 .explore-card:hover {
     transform: translateY(-5px);
-    border-color: var(--color-green, #00ff88);
+    border-color: var(--color-yellow);
 }
 
 .explore-card h3 {
@@ -190,6 +188,7 @@
     color: #aaa;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -211,7 +210,6 @@
 .create-post-simple {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid #333;
-    border-radius: 8px;
     padding: 15px;
     margin-bottom: 30px;
 }
@@ -235,11 +233,10 @@
 }
 
 .post-btn-small {
-    background: var(--color-green, #00ff88);
+    background: var(--color-yellow);
     color: black;
     border: none;
     padding: 5px 15px;
-    border-radius: 15px;
     font-weight: bold;
     cursor: pointer;
 }
@@ -273,7 +270,7 @@
 
 .panel-tab.active {
     color: white;
-    border-bottom-color: var(--color-green, #00ff88);
+    border-bottom-color: var(--color-yellow);
     background: rgba(255, 255, 255, 0.02);
 }
 
@@ -312,7 +309,7 @@
 
 .chat-bubble.mine {
     align-self: flex-end;
-    background: var(--color-green, #00ff88);
+    background: var(--color-yellow);
     color: black;
     border-bottom-right-radius: 2px;
 }
@@ -343,12 +340,11 @@
     background: #222;
     border: 1px solid #444;
     padding: 8px 12px;
-    border-radius: 20px;
     color: white;
 }
 
 .chat-send-btn {
-    background: var(--color-accent, #7c3aed);
+    background: var(--color-purple);
     border: none;
     color: white;
     width: 36px;
@@ -363,7 +359,7 @@
 }
 
 .chat-send-btn:hover {
-    background: var(--color-accent-hover, #6d28d9);
+    background: #5a027c;
 }
 
 .arcade-list {
@@ -378,7 +374,6 @@
     background: linear-gradient(135deg, #222, #111);
     border: 1px solid #333;
     padding: 15px;
-    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -387,7 +382,7 @@
 }
 
 .arcade-card:hover {
-    border-color: var(--color-yellow, #ffd700);
+    border-color: var(--color-yellow);
     transform: scale(1.02);
 }
 
@@ -438,13 +433,12 @@
     background-color: rgba(255, 255, 255, 0.03);
     border: 1px solid #333;
     padding: 20px;
-    border-radius: 8px;
     display: flex;
     flex-direction: column;
 }
 
 .feed-post.type-news_bite {
-    border-left: 4px solid #ff00ff;
+    border-left: 4px solid var(--color-pink);
     background: linear-gradient(45deg, rgba(80, 0, 80, 0.1), transparent);
 }
 
@@ -463,8 +457,8 @@
 }
 
 .badge-news_bite {
-    color: #ff00ff;
-    border: 1px solid #ff00ff;
+    color: var(--color-pink);
+    border: 1px solid var(--color-pink);
 }
 
 .groups-header h1 {
@@ -473,10 +467,9 @@
 
 .create-group-btn {
     padding: 12px 24px;
-    background: #00ff88;
+    background: var(--color-yellow);
     color: black;
     border: none;
-    border-radius: 30px;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s;
@@ -495,7 +488,6 @@
 .group-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
     padding: 20px;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -536,7 +528,7 @@
 .group-feed-link {
     display: inline-block;
     margin-top: 15px;
-    color: #00ff88;
+    color: var(--color-yellow);
     text-decoration: none;
     font-weight: 600;
 }
@@ -562,7 +554,7 @@
 
 .newsbites-label {
     font-size: 2rem;
-    color: #ff00ff;
+    color: var(--color-pink);
     /* Pink/Purple for Newsbites */
     margin-bottom: 20px;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
@@ -575,22 +567,21 @@
     border: 1px solid #333;
     padding: 20px;
     margin-bottom: 20px;
-    border-radius: 8px;
     /* Reset from rounded group card */
 }
 
 /* Post Types from Feed.css adapted */
 .post-card.type-casual {
-    border-left: 4px solid var(--color-purple, #a777e3);
+    border-left: 4px solid var(--color-purple);
 }
 
 .post-card.type-roast {
-    border-left: 4px solid var(--color-red, #ff6b6b);
+    border-left: 4px solid var(--color-red);
     background: rgba(255, 0, 0, 0.05);
 }
 
 .post-card.type-meme {
-    border-left: 4px solid var(--color-yellow, #ffd700);
+    border-left: 4px solid var(--color-yellow);
 }
 
 .post-card.type-confession {
@@ -637,7 +628,7 @@
 }
 
 .post-headline {
-    color: #ffd700;
+    color: var(--color-yellow);
     font-size: 1.1rem;
     margin-bottom: 8px;
     text-transform: uppercase;
@@ -686,7 +677,7 @@
     right: 0px;
     width: 8px;
     height: 8px;
-    background: #00ff88;
+    background: var(--color-yellow);
     border-radius: 50%;
     border: 1px solid #222;
 }

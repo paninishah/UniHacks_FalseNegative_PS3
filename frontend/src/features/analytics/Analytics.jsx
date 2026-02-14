@@ -56,7 +56,7 @@ const HeatmapCalendar = ({ data }) => {
                     <div key={i} style={{
                         width: '20px',
                         height: '20px',
-                        backgroundColor: Math.random() > 0.5 ? '#00ff88' : '#333',
+                        backgroundColor: Math.random() > 0.5 ? '#FFFF00' : '#333',
                         borderRadius: '4px'
                     }}></div>
                 ))}

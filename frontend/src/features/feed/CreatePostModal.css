@@ -17,7 +17,7 @@
     background: #1a1a1a;
     width: 90%;
     max-width: 500px;
-    border-radius: 1px;
+    border-radius: 0;
     /* Sharp edges */
     border: 1px solid #333;
     overflow: hidden;

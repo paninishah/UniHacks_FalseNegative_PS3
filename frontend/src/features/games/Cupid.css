@@ -35,8 +35,9 @@
 
 .cupid-header h1 {
     font-size: 3rem;
-    background: linear-gradient(to right, #ff6b8a, #ff3d6e, #ff1493);
+    background: linear-gradient(to right, var(--color-red), var(--color-pink));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 0;
 }
@@ -63,8 +64,7 @@
     gap: 15px;
     padding: 15px 30px;
     background: rgba(255, 20, 147, 0.1);
-    border: 1px solid rgba(255, 20, 147, 0.3);
-    border-radius: 12px;
+    border: 1px solid var(--color-pink);
     font-size: 1.1rem;
     font-weight: 600;
     animation: fadeIn 0.3s ease;
@@ -103,7 +103,6 @@
     padding: 20px 15px;
     background: rgba(255, 255, 255, 0.04);
     border: 2px solid transparent;
-    border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
@@ -115,13 +114,13 @@
 }
 
 .cupid-card.selected-a {
-    border-color: #ff6b8a;
-    background: rgba(255, 107, 138, 0.12);
-    box-shadow: 0 0 20px rgba(255, 107, 138, 0.2);
+    border-color: var(--color-red);
+    background: rgba(252, 31, 4, 0.12);
+    box-shadow: 0 0 20px rgba(252, 31, 4, 0.2);
 }
 
 .cupid-card.selected-b {
-    border-color: #ff1493;
+    border-color: var(--color-pink);
     background: rgba(255, 20, 147, 0.12);
     box-shadow: 0 0 20px rgba(255, 20, 147, 0.2);
 }
@@ -129,6 +128,7 @@
 .cupid-avatar {
     width: 60px;
     height: 60px;
+    /* Avatars maintained as circles for recognition */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -151,7 +151,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #ff6b8a;
+    background: var(--color-red);
     color: white;
     display: flex;
     align-items: center;
@@ -161,17 +161,16 @@
 }
 
 .selection-badge.badge-b {
-    background: #ff1493;
+    background: var(--color-pink);
 }
 
 .cupid-submit-btn {
     padding: 14px 40px;
     font-size: 1.1rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #ff6b8a, #ff1493);
+    background: linear-gradient(135deg, var(--color-red), var(--color-pink));
     color: white;
     border: none;
-    border-radius: 30px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -188,7 +187,7 @@
 
 .cupid-submitted h3 {
     font-size: 1.5rem;
-    color: #00ff88;
+    color: var(--color-yellow);
     margin-bottom: 10px;
 }
 
@@ -201,10 +200,9 @@
     padding: 14px 40px;
     font-size: 1rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #ff6b8a, #ff1493);
+    background: linear-gradient(135deg, var(--color-red), var(--color-pink));
     color: white;
     border: none;
-    border-radius: 30px;
     cursor: pointer;
     transition: transform 0.2s;
 }
@@ -223,7 +221,6 @@
 .cupid-match-reveal {
     background: rgba(255, 20, 147, 0.08);
     border: 1px solid rgba(255, 20, 147, 0.3);
-    border-radius: 20px;
     padding: 40px;
     text-align: center;
     animation: fadeIn 0.5s ease;
@@ -237,7 +234,7 @@
 
 .cupid-match-reveal h2 {
     font-size: 1.5rem;
-    color: #ff6b8a;
+    color: var(--color-pink);
     margin-bottom: 30px;
     letter-spacing: 3px;
 }

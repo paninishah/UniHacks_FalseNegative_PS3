@@ -110,7 +110,7 @@ const Communities = () => {
 
     const handleLeaveCommunity = async () => {
         if (!selectedCommunity) return;
-        if (!window.confirm(`Are you sure you want to leave r/${selectedCommunity.name}?`)) return;
+        if (!window.confirm(`Are you sure you want to leave #${selectedCommunity.name}?`)) return;
         try {
             await api.post(ENDPOINTS.COMMUNITIES.LEAVE(selectedCommunity.id));
             fetchCommunities(); // Refresh
@@ -141,7 +141,7 @@ const Communities = () => {
                             className={`community-item ${selectedCommunity?.id === c.id ? 'active' : ''}`}
                             onClick={() => setSelectedCommunity(c)}
                         >
-                            <span className="community-icon">r/</span>
+                            <span className="community-icon">#</span>
                             <span className="community-name">{c.name}</span>
                         </div>
                     ))}
@@ -154,7 +154,7 @@ const Communities = () => {
                     <>
                         <div className="community-header-banner" style={{ backgroundImage: `url(${selectedCommunity.banner || ''})` }}>
                             <div className="banner-content">
-                                <h1>r/{selectedCommunity.name}</h1>
+                                <h1>#{selectedCommunity.name}</h1>
                                 <p>{selectedCommunity.description}</p>
                                 <p className="member-count">{selectedCommunity.member_count} Members</p>
                             </div>
@@ -173,7 +173,7 @@ const Communities = () => {
                         <div className="communities-feed-grid">
                             {posts.length === 0 ? (
                                 <div className="no-posts">
-                                    <p>No posts yet in r/{selectedCommunity.name}. Be the first!</p>
+                                    <p>No posts yet in #{selectedCommunity.name}. Be the first!</p>
                                 </div>
                             ) : (
                                 posts.map((post, index) => (
@@ -210,7 +210,7 @@ const Communities = () => {
             {isPostModalOpen && (
                 <div className="modal-overlay">
                     <div className="create-post-modal">
-                        <h3>Post to r/{selectedCommunity?.name}</h3>
+                        <h3>Post to #{selectedCommunity?.name}</h3>
                         <form onSubmit={handleCreatePost}>
                             <input
                                 type="text"

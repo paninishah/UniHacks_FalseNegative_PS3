@@ -89,7 +89,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    border-radius: 4px;
+    border-radius: 0;
     /* Slight rounding or stick to sharp? User said "sharp edges" before but "less cartoonish". Let's keep sharp but refined. */
     border-radius: 0;
     position: relative;
@@ -137,9 +137,7 @@
     transform: scale(1.1);
 }
 
-.nav-item.active .nav-icon {
-    /* Original colors preserved */
-}
+
 
 .nav-text {
     opacity: 0;

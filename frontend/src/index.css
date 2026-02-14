@@ -15,7 +15,7 @@
   padding: 0;
   box-sizing: border-box;
   border-radius: 0 !important;
-  /* Enforce sharp edges */
+  /* Enforce sharp edges strictly */
 }
 
 body {

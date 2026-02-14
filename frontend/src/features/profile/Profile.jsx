@@ -117,7 +117,7 @@ const Profile = () => {
 
     const getCategoryBadge = (category) => {
         const map = {
-            meme: { label: 'MEME', color: '#00ff88' },
+            meme: { label: 'MEME', color: 'var(--color-yellow)' },
             roast: { label: 'ROAST', color: '#ff4444' },
             confession: { label: 'CONFESSION', color: '#a18cd1' },
             joke: { label: 'JOKE', color: '#FFD700' },

@@ -126,7 +126,7 @@ const MostLikelyTo = () => {
                 </div>
             ) : (
                 <div className="results-view" style={{ width: '100%', maxWidth: '500px' }}>
-                    <h3 style={{ color: '#00ff88', marginBottom: '20px' }}>✅ You voted for {votedUser}!</h3>
+                    <h3 style={{ color: 'var(--color-yellow)', marginBottom: '20px' }}>✅ You voted for {votedUser}!</h3>
 
                     <button className="next-button" onClick={handleFinish} style={{ marginBottom: '20px' }}>
                         FINISH GAME & REVEAL WINNER

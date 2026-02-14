@@ -21,6 +21,7 @@
 }
 
 /* SIDEBAR */
+/* SIDEBAR */
 .communities-sidebar {
     width: 280px;
     background-color: #1a1a1a;
@@ -47,7 +48,6 @@
     background: transparent;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -73,7 +73,6 @@
 
 .community-item {
     padding: 10px;
-    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -113,7 +112,6 @@
     background-size: cover;
     background-position: center;
     padding: 40px;
-    border-radius: 12px;
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
@@ -157,7 +155,6 @@
     padding: 10px 20px;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 20px;
     transition: transform 0.2s;
 }
 
@@ -179,7 +176,6 @@
     padding: 10px 25px;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 20px;
     transition: background 0.2s;
 }
 
@@ -194,7 +190,6 @@
     padding: 10px 25px;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 20px;
     transition: all 0.2s;
 }
 
@@ -258,9 +253,9 @@
 }
 
 .fab-games {
-    background-color: var(--color-purple);
-    /* As requested in last turn for Games */
-    border: 2px solid var(--color-purple);
+    background-color: var(--color-yellow);
+    /* Changed from purple to yellow per theme */
+    border: 2px solid var(--color-yellow);
 }
 
 .fab-chat img,
@@ -331,13 +326,13 @@
 /* Games Specifics */
 .games-popup {
     bottom: 120px;
-    border-color: var(--color-purple);
+    border-color: var(--color-yellow);
     height: 300px;
 }
 
 .games-header {
-    background-color: var(--color-purple);
-    color: white;
+    background-color: var(--color-yellow);
+    color: black;
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -381,7 +376,6 @@
 .create-post-modal {
     background: #1a1a1a;
     padding: 30px;
-    border-radius: 12px;
     width: 90%;
     max-width: 500px;
     border: 1px solid var(--color-pink);
@@ -402,7 +396,6 @@
     border: 1px solid #444;
     color: white;
     padding: 10px;
-    border-radius: 4px;
     font-family: inherit;
 }
 
@@ -415,7 +408,6 @@
 .modal-actions button {
     padding: 8px 16px;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
 }
@@ -448,21 +440,20 @@
     background: #333;
     color: #fff;
     margin-top: 10px;
-    border-radius: 4px;
     text-transform: uppercase;
 }
 
 .type-news_bite .post-type-badge {
-    color: #ff00ff;
-    border: 1px solid #ff00ff;
+    color: var(--color-pink);
+    border: 1px solid var(--color-pink);
 }
 
 .type-meme .post-type-badge {
-    color: #ffd700;
-    border: 1px solid #ffd700;
+    color: var(--color-yellow);
+    border: 1px solid var(--color-yellow);
 }
 
 .type-roast .post-type-badge {
-    color: #ff6b6b;
-    border: 1px solid #ff6b6b;
+    color: var(--color-red);
+    border: 1px solid var(--color-red);
 }
