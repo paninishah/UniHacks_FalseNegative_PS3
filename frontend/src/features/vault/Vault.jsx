@@ -5,6 +5,7 @@ import './Vault.css';
 import vaultAPI from '../../services/vaultAPI';
 import client from '../../api/client';
 import VaultFolderView from './VaultFolderView';
+import MusicPlayer from '../../components/MusicPlayer';
 
 const Vault = () => {
     const { userId } = useParams();
@@ -95,15 +96,21 @@ const Vault = () => {
         }
     };
 
+    // Music state
+    const [activeTrack, setActiveTrack] = useState(null);
+
     const handleAnalyzeMusic = async (capsuleId) => {
-        // ... (existing logic)
         try {
-            alert("Analyzing musical vibe... 🎵");
+            // alert("Analyzing musical vibe... 🎵"); // Removing alert
             const result = await vaultAPI.analyzeMusic(capsuleId);
-            alert(`Analysis Complete! Vibe: ${result.vibe}`);
-            // fetchData(); // Removed to avoid reset
+            // alert(`Analysis Complete! Vibe: ${result.vibe}`);
+
+            if (result.anthem) {
+                setActiveTrack(result.anthem);
+            }
         } catch (error) {
             console.error("Analysis failed", error);
+            alert("Could not analyze music. Try again later.");
         }
     };
 
@@ -115,6 +122,21 @@ const Vault = () => {
     return (
         <div className="vault-container">
             <h1 className="vault-title">{isVisitor ? "SECRET VAULT" : "VAULT"}</h1>
+
+            {/* Music Player Overlay */}
+            {activeTrack && (
+                <div style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, width: '90%', maxWidth: '400px' }}>
+                    <div style={{ position: 'relative' }}>
+                        <button
+                            onClick={() => setActiveTrack(null)}
+                            style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', zIndex: 1001 }}
+                        >
+                            ×
+                        </button>
+                        <MusicPlayer track={activeTrack} autoplay={true} />
+                    </div>
+                </div>
+            )}
 
             {/* Tabs */}
             <div className="vault-tabs">
@@ -186,8 +208,8 @@ const Vault = () => {
                                             ) : (
                                                 <span className="locked-msg">LOCKED</span>
                                             )}
-                                            <button className="open-btn small" onClick={() => handleAnalyzeMusic(cap.id)}>
-                                                🎶
+                                            <button className="open-btn small" onClick={(e) => { e.stopPropagation(); handleAnalyzeMusic(cap.id); }} style={{ marginLeft: '10px' }}>
+                                                🎵 PLAY
                                             </button>
                                         </div>
                                     </div>

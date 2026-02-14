@@ -5,6 +5,7 @@ import { ENDPOINTS } from '../../api/endpoints';
 import { useAuth } from '../../context/AuthContext';
 import './Groups.css';
 import InterventionList from './Interventions/InterventionList';
+import MusicPlayer from '../../components/MusicPlayer';
 
 const Groups = () => {
     const navigate = useNavigate();
@@ -22,7 +23,29 @@ const Groups = () => {
     // UI State
     const [rightInfoTab, setRightInfoTab] = useState('chat'); // 'chat' or 'games'
     const [loading, setLoading] = useState(true);
-    const [loadingPosts, setLoadingPosts] = useState(false);
+
+
+    // Like State & Music
+    const [musicVibe, setMusicVibe] = useState(null);
+    const [analyzingMusic, setAnalyzingMusic] = useState(false);
+
+    const handleGenerateMusic = async () => {
+        if (!selectedGroup) return;
+        setAnalyzingMusic(true);
+        // Collect text
+        const sampleTexts = [selectedGroup.name, selectedGroup.description];
+        posts.slice(0, 5).forEach(p => sampleTexts.push(p.text_content));
+
+        try {
+            const keywords = sampleTexts.join(" ").split(" ").slice(0, 5);
+            const result = await api.post(ENDPOINTS.MUSIC.ANALYZE, { songs: keywords });
+            setMusicVibe(result.data);
+        } catch (error) {
+            console.error("Music analysis failed", error);
+        } finally {
+            setAnalyzingMusic(false);
+        }
+    };
 
     // Inputs
     const [newPostContent, setNewPostContent] = useState('');
@@ -282,6 +305,23 @@ const Groups = () => {
                                     {!selectedGroup.is_public && <span className="header-private-tag">PRIVATE</span>}
                                 </h1>
                                 <p className="group-header-desc">{selectedGroup.description} • {selectedGroup.member_count} Members</p>
+
+                                {/* Music Vibe Section - INJECTED FOR DASHBOARD */}
+                                <div className="group-music-section" style={{ marginTop: '15px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                                    {!musicVibe ? (
+                                        <button onClick={handleGenerateMusic} disabled={analyzingMusic} style={{ background: 'linear-gradient(45deg, #1DB954, #191414)', border: 'none', color: 'white', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', width: '100%', marginBottom: '10px', opacity: 0.9, transition: 'opacity 0.2s' }}>
+                                            {analyzingMusic ? "Analyzing... 🎧" : "🎵 GET GROUP VIBE"}
+                                        </button>
+                                    ) : (
+                                        <div className="music-vibe-display">
+                                            <div style={{ marginBottom: '10px' }}>
+                                                <span style={{ color: '#aaa', fontSize: '0.8rem' }}>VIBE CHECK:</span>
+                                                <span style={{ marginLeft: '8px', color: '#1DB954', fontWeight: 'bold', textTransform: 'uppercase' }}>{musicVibe.vibe}</span>
+                                            </div>
+                                            <MusicPlayer track={musicVibe.anthem} />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 

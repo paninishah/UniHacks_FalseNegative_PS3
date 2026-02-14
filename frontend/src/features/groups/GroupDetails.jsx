@@ -4,6 +4,7 @@ import api from '../../api/client';
 import { ENDPOINTS } from '../../api/endpoints';
 import './Groups.css';
 import InterventionList from './Interventions/InterventionList';
+import MusicPlayer from '../../components/MusicPlayer';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -11,6 +12,33 @@ const GroupDetails = () => {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const [joining, setJoining] = useState(false);
+
+    // Like State
+    const [musicVibe, setMusicVibe] = useState(null);
+    const [analyzingMusic, setAnalyzingMusic] = useState(false);
+
+    const handleGenerateMusic = async () => {
+        setAnalyzingMusic(true);
+        // Collect some text to analyze (group name + description + recent posts)
+        const sampleTexts = [group.name, group.description];
+        posts.slice(0, 5).forEach(p => sampleTexts.push(p.text_content));
+
+        try {
+            // For MVP, we are sending a list of "Songs" or just relying on random fallback if text is not song names
+            // But the backend endpoint expects "songs". Let's send a dummy list if we can't extract real ones, 
+            // or better, let's use the explicit "Analyze Group Taste" endpoint if it existed for text.
+            // Since the backend `AnalyzeGroupTasteView` expects "songs" (list of strings), we will send 
+            // keywords from the group context as if they were songs, or just some hardcoded vibe starters based on group category.
+
+            const keywords = sampleTexts.join(" ").split(" ").slice(0, 5);
+            const result = await api.post(ENDPOINTS.MUSIC.ANALYZE, { songs: keywords });
+            setMusicVibe(result.data);
+        } catch (error) {
+            console.error("Music analysis failed", error);
+        } finally {
+            setAnalyzingMusic(false);
+        }
+    };
 
     // Feed state
     const [posts, setPosts] = useState([]);
@@ -139,6 +167,24 @@ const GroupDetails = () => {
                         <span>•</span>
                         <span>{group.is_public ? "Public Group" : "Private Group"}</span>
                     </div>
+
+                    {/* Music Vibe Section */}
+                    <div className="group-music-section" style={{ marginTop: '15px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                        {!musicVibe ? (
+                            <button onClick={handleGenerateMusic} disabled={analyzingMusic} style={{ background: '#ff00ff', border: '2px solid white', color: 'white', padding: '15px 30px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2rem', boxShadow: '0 0 10px #ff00ff', width: '100%', marginBottom: '20px' }}>
+                                {analyzingMusic ? "Analyzing Vibe... 🎧" : "🎵 GIT GROUP VIBE (CLICK ME)"}
+                            </button>
+                        ) : (
+                            <div className="music-vibe-display">
+                                <div style={{ marginBottom: '10px' }}>
+                                    <span style={{ color: '#aaa', fontSize: '0.8rem' }}>VIBE CHECK:</span>
+                                    <span style={{ marginLeft: '8px', color: '#1DB954', fontWeight: 'bold', textTransform: 'uppercase' }}>{musicVibe.vibe}</span>
+                                </div>
+                                <MusicPlayer track={musicVibe.anthem} />
+                            </div>
+                        )}
+                    </div>
+
                     <button
                         className={`join-btn ${group.is_member ? 'active' : ''}`}
                         onClick={handleJoinLeave}
