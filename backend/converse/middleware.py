@@ -21,13 +21,17 @@ class JwtAuthMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        query_string = scope.get("query_string", b"").decode("utf-8")
-        query_params = parse_qs(query_string)
-        token = query_params.get("token", [None])[0]
+        try:
+            query_string = scope.get("query_string", b"").decode("utf-8")
+            query_params = parse_qs(query_string)
+            token = query_params.get("token", [None])[0]
 
-        if token:
-            scope["user"] = await get_user(token)
-        else:
+            if token:
+                scope["user"] = await get_user(token)
+            else:
+                scope["user"] = AnonymousUser()
+        except Exception as e:
+            print(f"Middleware Auth Error: {e}")
             scope["user"] = AnonymousUser()
 
         return await self.app(scope, receive, send)

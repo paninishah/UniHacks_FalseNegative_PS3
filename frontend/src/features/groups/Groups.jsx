@@ -23,6 +23,7 @@ const Groups = () => {
     // UI State
     const [rightInfoTab, setRightInfoTab] = useState('chat'); // 'chat' or 'games'
     const [loading, setLoading] = useState(true);
+    const [loadingPosts, setLoadingPosts] = useState(false);
 
 
     // Like State & Music
@@ -120,13 +121,20 @@ const Groups = () => {
             }
         };
 
-        wsRef.current.onclose = () => {
-            console.log("Chat WebSocket Disconnected");
-            setParticipants([]); // Clear on disconnect
+        wsRef.current.onclose = (e) => {
+            console.log("Chat WebSocket Disconnected", e.code, e.reason);
+            setParticipants([]);
+
+            // If closed cleanly or auth failure, don't spam reconnect
+            // 4003 is our custom "Auth Failed" code (if we used it, but here likely 1000 or 1006)
+            if (e.code === 4003) {
+                alert("Chat Authentication Failed. Please login again.");
+            }
         };
 
         wsRef.current.onerror = (err) => {
             console.error("WebSocket Error:", err);
+            // Don't act here, let onclose handle it
         };
     };
 
@@ -194,6 +202,13 @@ const Groups = () => {
     const handleSendChat = async (e) => {
         e.preventDefault();
         if (!chatInput.trim() || !selectedGroup || !wsRef.current) return;
+
+        if (wsRef.current.readyState !== WebSocket.OPEN) {
+            console.warn("WebSocket not open. Reconnecting...");
+            connectChatWebSocket(selectedGroup.id);
+            // Optionally queue message or alert user
+            return;
+        }
 
         // Send via WebSocket
         try {
@@ -411,15 +426,19 @@ const Groups = () => {
                         <div className="right-panel-content">
                             {rightInfoTab === 'chat' ? (
                                 <div className="chat-container">
-                                    <div className="chat-participants">
-                                        <small>Online ({participants.length}): </small>
-                                        {participants.map(p => (
-                                            <span key={p.id} className="online-user-dot" title={p.username}>
-                                                {p.username.charAt(0).toUpperCase()}
-                                            </span>
-                                        ))}
+                                    <div className="chat-header-status" style={{ padding: '5px 10px', fontSize: '0.75rem', color: '#666', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div className="chat-participants-list">
+                                            {participants.map(p => (
+                                                <span key={p.id} className="online-user-dot" title={p.username} style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#1DB954', marginRight: '5px' }}></span>
+                                            ))}
+                                            <span style={{ marginLeft: '5px' }}>{participants.length} Active</span>
+                                        </div>
+                                        <div className={`connection-status ${!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN ? 'offline' : 'online'}`} style={{ color: !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN ? 'orange' : '#1DB954' }}>
+                                            {!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN ? 'Connecting... 🟠' : 'Live 🟢'}
+                                        </div>
                                     </div>
-                                    <div className="chat-messages-area">
+
+                                    <div className="chat-messages-area" style={{ height: 'calc(100% - 90px)' }}>
                                         {chatMessages.length === 0 && <div style={{ textAlign: 'center', color: '#444', marginTop: '20px' }}>No messages yet.<br />Start the convo!</div>}
                                         {chatMessages.map(msg => (
                                             <div key={msg.id} className={`chat-bubble ${msg.user?.id === currentUser?.id ? 'mine' : 'theirs'}`}>

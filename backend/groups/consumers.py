@@ -12,8 +12,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.group_id = self.scope['url_route']['kwargs']['group_id']
         self.room_group_name = f'chat_{self.group_id}'
         self.user = self.scope['user']
+        print(f"ChatConsumer: Connecting user {self.user}")
 
         if not self.user.is_authenticated:
+            print("ChatConsumer: Rejecting unauthenticated connection")
             await self.close()
             return
 

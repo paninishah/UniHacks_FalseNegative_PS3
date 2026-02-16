@@ -664,3 +664,60 @@ Not Found: /ws/chat/17/
 [14/Feb/2026 09:02:48] "GET /api/notifications/ HTTP/1.1" 200 2613
 Unauthorized: /api/notifications/
 [14/Feb/2026 09:03:48] "GET /api/notifications/ HTTP/1.1" 401 172
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/converse/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/converse/ai_services.py:4: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+System check identified no issues (0 silenced).
+February 16, 2026 - 13:53:25
+Django version 6.0.2, using settings 'converse.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/converse/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/converse/ai_services.py:4: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+System check identified no issues (0 silenced).
+February 16, 2026 - 13:55:45
+Django version 6.0.2, using settings 'converse.settings'
+Starting ASGI/Daphne version 4.2.1 development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/groups/consumers.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+/Users/mahek/Desktop/hackathons/UniHacks_FalseNegative_PS3/backend/converse/ai_services.py:4: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+System check identified no issues (0 silenced).
+February 16, 2026 - 14:00:31
+Django version 6.0.2, using settings 'converse.settings'
+Starting ASGI/Daphne version 4.2.1 development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
