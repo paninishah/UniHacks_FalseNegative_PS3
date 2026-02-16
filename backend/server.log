@@ -615,3 +615,52 @@ Not Found: /ws/chat/17/
 [14/Feb/2026 08:38:26] "GET /api/notifications/ HTTP/1.1" 200 2613
 [14/Feb/2026 08:38:36] "GET /api/notifications/ HTTP/1.1" 200 2613
 [14/Feb/2026 08:38:46] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:38:57] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:39:07] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:39:17] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:39:26] "GET /api/notifications/ HTTP/1.1" 200 2613
+Unauthorized: /api/notifications/
+[14/Feb/2026 08:39:36] "GET /api/notifications/ HTTP/1.1" 401 172
+[14/Feb/2026 08:58:19] "POST /api/users/login/ HTTP/1.1" 200 942
+[14/Feb/2026 08:58:19] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:58:19] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:58:19] "GET /api/social/feed/ HTTP/1.1" 200 11997
+[14/Feb/2026 08:58:19] "GET /api/social/feed/ HTTP/1.1" 200 11997
+[14/Feb/2026 08:58:22] "GET /api/groups/my/ HTTP/1.1" 200 396
+[14/Feb/2026 08:58:22] "GET /api/groups/ HTTP/1.1" 200 3016
+[14/Feb/2026 08:58:22] "GET /api/groups/my/ HTTP/1.1" 200 396
+Not Found: /ws/chat/17/
+[14/Feb/2026 08:58:22] "GET /ws/chat/17/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMDU5Nzk5LCJpYXQiOjE3NzEwNTk0OTksImp0aSI6IjQxZDM5MmMyN2Q5YzQ0OWRiNDA3ODg1ZTc4OTM1NWE3IiwidXNlcl9pZCI6IjgifQ.NNLtR_cfzRVJSurnvRZAJ0rXPt2YwQ5kALqBmp2s8qw HTTP/1.1" 404 4793
+[14/Feb/2026 08:58:22,606] - Broken pipe from ('127.0.0.1', 53636)
+[14/Feb/2026 08:58:22] "GET /api/groups/17/interventions/ HTTP/1.1" 200 2
+[14/Feb/2026 08:58:22] "GET /api/groups/17/messages/ HTTP/1.1" 200 2
+[14/Feb/2026 08:58:22] "GET /api/groups/ HTTP/1.1" 200 3016
+[14/Feb/2026 08:58:22] "GET /api/groups/17/interventions/ HTTP/1.1" 200 2
+[14/Feb/2026 08:58:22] "GET /api/groups/17/messages/ HTTP/1.1" 200 2
+Not Found: /ws/chat/17/
+[14/Feb/2026 08:58:22] "GET /ws/chat/17/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxMDU5Nzk5LCJpYXQiOjE3NzEwNTk0OTksImp0aSI6IjQxZDM5MmMyN2Q5YzQ0OWRiNDA3ODg1ZTc4OTM1NWE3IiwidXNlcl9pZCI6IjgifQ.NNLtR_cfzRVJSurnvRZAJ0rXPt2YwQ5kALqBmp2s8qw HTTP/1.1" 404 4793
+[14/Feb/2026 08:58:22,619] - Broken pipe from ('127.0.0.1', 53640)
+[14/Feb/2026 08:58:29] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:58:39] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:58:49] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:58:59] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:09] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:19] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:29] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:39] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:49] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 08:59:59] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:00:09] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:00:19] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:00:29] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:00:39] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:00:49] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:00] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:10] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:20] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:30] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:40] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:01:50] "GET /api/notifications/ HTTP/1.1" 200 2613
+[14/Feb/2026 09:02:48] "GET /api/notifications/ HTTP/1.1" 200 2613
+Unauthorized: /api/notifications/
+[14/Feb/2026 09:03:48] "GET /api/notifications/ HTTP/1.1" 401 172
